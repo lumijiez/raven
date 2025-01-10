@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: auth
+
+  datasource:
+    url: jdbc:postgresql://postgres_raven:5432/raven
+    username: raven
+    password: raven
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      pool-name: HikariPool-1
+      minimum-idle: 5
+      maximum-pool-size: 10
+      idle-timeout: 30000
+      connection-timeout: 30000
+      max-lifetime: 60000
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  security:
+    user:
+      name: raven
+      password: raven

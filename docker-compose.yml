@@ -1,0 +1,45 @@
+services:
+  auth-raven:
+    build:
+      context: ./auth
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8080"
+    depends_on:
+      postgres_raven:
+        condition: service_healthy
+
+  message-raven:
+    build:
+      context: ./message
+      dockerfile: Dockerfile
+    ports:
+      - "8001:8080"
+    depends_on:
+      - mongodb_raven
+
+  postgres_raven:
+    image: postgres:latest
+    environment:
+      - "POSTGRES_DB=raven"
+      - "POSTGRES_USER=raven"
+      - "POSTGRES_PASSWORD=raven"
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U raven" ]
+      interval: 5s
+      timeout: 5s
+      retries: 100
+
+  mongodb_raven:
+    image: mongo:latest
+    command: mongod --quiet --logpath /dev/null
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: raven
+      MONGO_INITDB_ROOT_PASSWORD: raven
+      MONGO_INITDB_DATABASE: raven
+    ports:
+      - "27017:27017"
+    logging:
+      driver: "none"

@@ -4,18 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <modules>
-        <module>auth</module>
-    </modules>
-
     <groupId>io.github.lumijiez</groupId>
     <artifactId>raven</artifactId>
     <version>1.0</version>
+    <packaging>pom</packaging>
 
-    <properties>
-        <maven.compiler.source>23</maven.compiler.source>
-        <maven.compiler.target>23</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
-
+    <modules>
+        <module>auth</module>
+        <module>message</module>
+    </modules>
 </project>
