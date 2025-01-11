@@ -1,4 +1,5 @@
-package io.github.lumijiez.auth.util;
+package io.github.lumijiez.auth.security;
+import io.github.lumijiez.auth.domain.entity.User;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,13 +12,13 @@ import java.util.Map;
 import java.util.UUID;
 
 @Component
-public class JwtUtil {
+public class JwtHelper {
 
     private final SecretKey key;
     private final long jwtExpirationInMs;
 
-    public JwtUtil(@Value("${jwt.secret:UltraFuckingSecureRavenKeyTheresNoWayYouCanSolveIt}") String secret,
-                   @Value("${jwt.expiration:86400000}") long jwtExpirationInMs) {
+    public JwtHelper(@Value("${jwt.secret:UltraFuckingSecureRavenKeyTheresNoWayYouCanSolveIt}") String secret,
+                     @Value("${jwt.expiration:86400000}") long jwtExpirationInMs) {
         this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
         this.jwtExpirationInMs = jwtExpirationInMs;
     }
@@ -33,5 +34,16 @@ public class JwtUtil {
                 .expiration(expiryDate)
                 .signWith(key)
                 .compact();
+    }
+
+    public String generateTokenForUser(User user) {
+        UUID id = user.getId();
+        String username = user.getUsername();
+        String email = user.getEmail();
+        Map<String, Object> claims = Map.of(
+                "username", username,
+                "email", email
+        );
+        return generateToken(id, claims);
     }
 }

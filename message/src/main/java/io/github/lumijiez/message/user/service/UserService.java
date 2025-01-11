@@ -7,9 +7,8 @@ import io.github.lumijiez.message.user.response.GetUserResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class UserService {
@@ -29,6 +28,7 @@ public class UserService {
                     .id(claims.getSub())
                     .email(claims.getEmail())
                     .username(claims.getUsername())
+                    .userChats(new ArrayList<>())
                     .build();
             userRepository.save(user);
             return GetUserResponse.success(user, "User created successfully.");

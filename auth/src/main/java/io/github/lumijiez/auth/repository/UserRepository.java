@@ -1,6 +1,6 @@
-package io.github.lumijiez.auth.data.repository;
+package io.github.lumijiez.auth.repository;
 
-import io.github.lumijiez.auth.data.entity.User;
+import io.github.lumijiez.auth.domain.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

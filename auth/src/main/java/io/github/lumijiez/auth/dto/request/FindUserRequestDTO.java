@@ -1,13 +1,13 @@
-package io.github.lumijiez.auth.data.dto.request;
+package io.github.lumijiez.auth.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
-public class LoginRequest {
+@Builder
+public class FindUserRequestDTO {
     @NotBlank
     private String usernameOrEmail;
-
-    @NotBlank
-    private String password;
 }
+
