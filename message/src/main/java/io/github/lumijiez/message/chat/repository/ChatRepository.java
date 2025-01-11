@@ -7,5 +7,5 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ChatRepository extends MongoRepository<Chat, String> {
-    List<Chat> findByMembersContains(UUID member);
+    List<Chat> findByParticipantsContains(UUID member);
 }

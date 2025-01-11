@@ -1,5 +1,5 @@
 services:
-  auth-raven:
+  auth_raven:
     build:
       context: ./auth
       dockerfile: Dockerfile
@@ -9,7 +9,7 @@ services:
       postgres_raven:
         condition: service_healthy
 
-  message-raven:
+  message_raven:
     build:
       context: ./message
       dockerfile: Dockerfile

@@ -13,11 +13,11 @@ public class ChatResponse {
     private String name;
     private List<UUID> members;
 
-    public static ChatResponse from(Chat chat) {
-        ChatResponse response = new ChatResponse();
-        response.setId(chat.getId().toString());
-        response.setName(chat.getName());
-        response.setMembers(chat.getMembers());
-        return response;
-    }
+//    public static ChatResponse from(Chat chat) {
+//        ChatResponse response = new ChatResponse();
+//        response.setId(chat.getId().toString());
+//        response.setName(chat.getName());
+//        response.setMembers(chat.getMembers());
+//        return response;
+//    }
 }
