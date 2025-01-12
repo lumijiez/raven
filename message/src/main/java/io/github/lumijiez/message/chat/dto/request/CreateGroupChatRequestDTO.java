@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Data
+@SuppressWarnings("unused")
 public class CreateGroupChatRequestDTO {
     private String name;
 

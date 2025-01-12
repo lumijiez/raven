@@ -9,5 +9,7 @@ import java.util.List;
 @Data
 @Builder
 public class MessageQueryResponseDTO {
+
+    @SuppressWarnings("unused")
     List<Message> messageList;
 }

@@ -1,6 +1,5 @@
 package io.github.lumijiez.message.msg.exception;
 
-import io.github.lumijiez.message.chat.exception.ChatAlreadyExistsException;
 import io.github.lumijiez.message.common.dto.response.ApiResponseDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

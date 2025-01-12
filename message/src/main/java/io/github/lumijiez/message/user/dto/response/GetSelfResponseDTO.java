@@ -3,9 +3,6 @@ package io.github.lumijiez.message.user.dto.response;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.github.lumijiez.message.user.entity.User;
 import lombok.Data;
-import org.springframework.http.ResponseEntity;
-
-import java.util.List;
 import java.util.UUID;
 
 @Data

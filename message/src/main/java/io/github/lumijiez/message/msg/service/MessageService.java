@@ -30,7 +30,7 @@ public class MessageService {
 
     @Transactional(readOnly = true)
     public MessageQueryResponseDTO getMessages(JwtClaims claims, MessageQueryRequestDTO request) {
-        if (!chatService.hasAccessToChat(claims.getSub(), request.getChatId())) {
+        if (chatService.lacksAccessToChat(claims.getSub(), request.getChatId())) {
             throw new ChatNoAccessException();
         }
 
@@ -57,7 +57,7 @@ public class MessageService {
 
     @Transactional
     public MessageDTO sendMessage(JwtClaims claims, MessageSendRequestDTO request) {
-        if (!chatService.hasAccessToChat(claims.getSub(), request.getChatId())) {
+        if (chatService.lacksAccessToChat(claims.getSub(), request.getChatId())) {
             throw new AccessDeniedException("User does not have access to this chat");
         }
 

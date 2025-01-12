@@ -45,15 +45,15 @@ public class UserService {
         return GetSelfResponseDTO.from(user, "User data synchronized successfully.");
     }
 
-    public boolean exists(UUID id) {
-        return userRepository.existsById(id);
+    public boolean notExists(UUID id) {
+        return !userRepository.existsById(id);
     }
 
-    public List<User> findAllByIds(List<UUID> ids) {
-        return userRepository.findAllById(ids.stream().map(UUID::toString).toList());
-    }
-
-    public void save(User user) {
-        userRepository.save(user);
-    }
+//    public List<User> findAllByIds(List<UUID> ids) {
+//        return userRepository.findAllById(ids.stream().map(UUID::toString).toList());
+//    }
+//
+//    public void save(User user) {
+//        userRepository.save(user);
+//    }
 }

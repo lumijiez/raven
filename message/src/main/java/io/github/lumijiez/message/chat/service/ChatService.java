@@ -8,16 +8,11 @@ import io.github.lumijiez.message.chat.entity.Chat;
 import io.github.lumijiez.message.chat.exception.ChatAlreadyExistsException;
 import io.github.lumijiez.message.chat.repository.ChatRepository;
 import io.github.lumijiez.message.jwt.JwtClaims;
-import io.github.lumijiez.message.user.entity.User;
 import io.github.lumijiez.message.user.exception.UserNotFoundException;
 import io.github.lumijiez.message.user.service.UserService;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.nio.file.AccessDeniedException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -43,8 +38,8 @@ public class ChatService {
         UUID creatorId = claims.getSub();
         UUID chatPartner = request.getChatPartner();
 
-        if (!userService.exists(creatorId)) throw new UserNotFoundException(creatorId.toString());
-        if (!userService.exists(chatPartner)) throw new UserNotFoundException(chatPartner.toString());
+        if (userService.notExists(creatorId)) throw new UserNotFoundException(creatorId.toString());
+        if (!userService.notExists(chatPartner)) throw new UserNotFoundException(chatPartner.toString());
 
         if (chatRepository.findByParticipantsContains(creatorId).stream()
                 .filter(chat -> !chat.isGroupChat())
@@ -63,8 +58,8 @@ public class ChatService {
     }
 
     @Transactional(readOnly = true)
-    public boolean hasAccessToChat(UUID userId, UUID chatId) {
-        return chatRepository.findById(chatId)
+    public boolean lacksAccessToChat(UUID userId, UUID chatId) {
+        return !chatRepository.findById(chatId)
                 .map(chat -> chat.getParticipants().contains(userId))
                 .orElse(false);
     }
