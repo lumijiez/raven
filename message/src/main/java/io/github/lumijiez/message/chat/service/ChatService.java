@@ -1,15 +1,21 @@
 package io.github.lumijiez.message.chat.service;
 
+import io.github.lumijiez.message.chat.dto.request.CreateDirectChatRequestDTO;
+import io.github.lumijiez.message.chat.dto.response.ChatCreateResponseDTO;
+import io.github.lumijiez.message.chat.dto.response.ChatQueryResponseDTO;
+import io.github.lumijiez.message.chat.dto.response.ChatResponseDTO;
 import io.github.lumijiez.message.chat.entity.Chat;
+import io.github.lumijiez.message.chat.exception.ChatAlreadyExistsException;
 import io.github.lumijiez.message.chat.repository.ChatRepository;
-import io.github.lumijiez.message.chat.request.CreateDirectChatRequest;
-import io.github.lumijiez.message.chat.response.*;
+import io.github.lumijiez.message.jwt.JwtClaims;
 import io.github.lumijiez.message.user.entity.User;
-import io.github.lumijiez.message.user.repository.UserRepository;
+import io.github.lumijiez.message.user.service.UserService;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,46 +23,49 @@ import java.util.UUID;
 public class ChatService {
 
     private final ChatRepository chatRepository;
+    private final UserService userService;
 
-    public ChatService(ChatRepository chatRepository) {
+    public ChatService(ChatRepository chatRepository, UserService userService) {
         this.chatRepository = chatRepository;
+        this.userService = userService;
     }
 
-//    public ChatQueryResponse getUserChats(String sub) {
-//        UUID userId = UUID.fromString(sub);
-//        List<Chat> chats = chatRepository.findByParticipantsContains(userId);
-//
-//        ChatQueryResponse response = new ChatQueryResponse();
-//        response.setChats(chats.stream().map(ChatResponse::from).toList());
-//        return response;
-//    }
+    @Transactional(readOnly = true)
+    public ChatQueryResponseDTO getUserChats(JwtClaims claims) {
+        List<Chat> chats = chatRepository.findByParticipantsContains(claims.getSub());
+        return ChatQueryResponseDTO.from(chats);
+    }
 
-//    @Transactional
-//    public ChatCreateResponse createDirectChat(String sub, CreateDirectChatRequest request) {
-//        UUID creatorId = UUID.fromString(sub);
-//        UUID chatPartner = request.getChatPartner();
-//
-//
-//        if (userRepository.existsAllByUserIdIn(members)) {
-//            return ChatCreateResponse.error("One or more users don't exist");
-//        }
-//
-//        Chat chat = new Chat();
-//        chat.setName(request.getName());
-//        chat.setMembers(members);
-//
-//        Chat savedChat = chatRepository.save(chat);
-//        String chatId = savedChat.getId().toString();
-//
-//        List<User> users = userRepository.findAllByUserIdIn(members);
-//        for (User user : users) {
-//            if (user.getChats() == null) {
-//                user.setChats(new ArrayList<>());
-//            }
-//            user.getChats().add(chatId);
-//            userRepository.save(user);
-//        }
-//
-//        return ChatCreateResponse.success(ChatResponse.from(savedChat));
-//    }
+    @Transactional
+    public ChatCreateResponseDTO createDirectChat(JwtClaims claims, CreateDirectChatRequestDTO request) {
+        UUID creatorId = claims.getSub();
+        UUID chatPartner = request.getChatPartner();
+
+        userService.exists(creatorId);
+        userService.exists(chatPartner);
+
+        if (chatRepository.findByParticipantsContains(creatorId).stream()
+                .filter(chat -> !chat.isGroupChat())
+                .anyMatch(chat -> chat.getParticipants().size() == 2 &&
+                        chat.getParticipants().contains(chatPartner)))
+            throw new ChatAlreadyExistsException();
+
+        Chat chat = new Chat();
+        chat.setId(UUID.randomUUID());
+        chat.setChatName(request.getName());
+        chat.setParticipants(List.of(creatorId, chatPartner));
+        chat.setGroupChat(false);
+        Chat savedChat = chatRepository.save(chat);
+
+        List<User> users = userService.findAllByIds(chat.getParticipants());
+        for (User user : users) {
+            if (user.getUserChats() == null) {
+                user.setUserChats(new ArrayList<>());
+            }
+            user.getUserChats().add(savedChat.getId());
+            userService.save(user);
+        }
+
+        return ChatCreateResponseDTO.from(ChatResponseDTO.from(savedChat));
+    }
 }

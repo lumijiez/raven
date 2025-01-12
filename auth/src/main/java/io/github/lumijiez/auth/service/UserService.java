@@ -62,7 +62,7 @@ public class UserService {
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword()))
             throw new IncorrectCredentialsException();
 
-        return AuthResponseDTO.success(jwtHelper.generateTokenForUser(user));
+        return AuthResponseDTO.from(jwtHelper.generateTokenForUser(user));
     }
 
 

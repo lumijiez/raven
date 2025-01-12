@@ -1,12 +1,10 @@
 package io.github.lumijiez.message.user.controller;
 
 import io.github.lumijiez.message.jwt.JwtClaims;
-import io.github.lumijiez.message.user.response.GetUserResponse;
+import io.github.lumijiez.message.user.dto.response.GetSelfResponseDTO;
 import io.github.lumijiez.message.user.service.UserService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,7 +20,7 @@ public class UserController {
     }
 
     @GetMapping("/self")
-    public ResponseEntity<GetUserResponse> getSelf(Authentication auth) {
-        return userService.get((JwtClaims) auth.getDetails());
+    public ResponseEntity<GetSelfResponseDTO> getSelf(Authentication auth) {
+        return ResponseEntity.ok(userService.get((JwtClaims) auth.getDetails()));
     }
 }

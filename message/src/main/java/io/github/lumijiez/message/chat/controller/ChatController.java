@@ -1,13 +1,13 @@
 package io.github.lumijiez.message.chat.controller;
 
-import io.github.lumijiez.message.chat.request.CreateDirectChatRequest;
-import io.github.lumijiez.message.chat.request.CreateGroupChatRequest;
-import io.github.lumijiez.message.chat.response.ChatCreateResponse;
-import io.github.lumijiez.message.chat.response.ChatQueryResponse;
+import io.github.lumijiez.message.chat.dto.request.CreateDirectChatRequestDTO;
+import io.github.lumijiez.message.chat.dto.response.ChatCreateResponseDTO;
+import io.github.lumijiez.message.chat.dto.response.ChatQueryResponseDTO;
 import io.github.lumijiez.message.chat.service.ChatService;
+import io.github.lumijiez.message.jwt.JwtClaims;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,20 +20,20 @@ public class ChatController {
         this.chatService = chatService;
     }
 
-//    @GetMapping("/getAll")
-//    public ResponseEntity<ChatQueryResponse> getUserChats() {
-//        String sub = SecurityContextHolder.getContext().getAuthentication().getName();
-//        return ResponseEntity.ok(chatService.getUserChats(sub));
-//    }
+    @GetMapping("/get-all")
+    public ResponseEntity<ChatQueryResponseDTO> getUserChats(Authentication auth) {
+        return ResponseEntity.ok(chatService.getUserChats((JwtClaims) auth.getDetails()));
+    }
 
-//    @PostMapping("/createDirect")
-//    public ResponseEntity<ChatCreateResponse> createChat(@Valid @RequestBody CreateDirectChatRequest request) {
-//        String sub = SecurityContextHolder.getContext().getAuthentication().getName();
-//        return ResponseEntity.ok(chatService.createChat(sub, request));
-//    }
+    @PostMapping("/create-direct")
+    public ResponseEntity<ChatCreateResponseDTO> createChat(
+            @Valid @RequestBody CreateDirectChatRequestDTO request,
+            Authentication auth) {
+        return ResponseEntity.ok(chatService.createDirectChat((JwtClaims) auth.getDetails(), request));
+    }
 
 //    @PostMapping("/createGroup")
-//    public ResponseEntity<ChatCreateResponse> createGroup(@Valid @RequestBody CreateGroupChatRequest request) {
+//    public ResponseEntity<ChatCreateResponseDTO> createGroup(@Valid @RequestBody CreateGroupChatRequestDTO request) {
 //        String sub = SecurityContextHolder.getContext().getAuthentication().getName();
 //        return ResponseEntity.ok(chatService.createChat(sub, request));
 //    }

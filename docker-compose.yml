@@ -34,12 +34,12 @@ services:
 
   mongodb_raven:
     image: mongo:latest
-    command: mongod --quiet --logpath /dev/null
+    command: mongod --quiet --logpath /dev/null --port 27018
     environment:
       MONGO_INITDB_ROOT_USERNAME: raven
       MONGO_INITDB_ROOT_PASSWORD: raven
       MONGO_INITDB_DATABASE: raven
     ports:
-      - "27017:27017"
+      - "27018:27018"
     logging:
       driver: "none"
