@@ -5,8 +5,9 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 
 public interface MessageRepository extends MongoRepository<Message, String> {
-    List<Message> findTop100ByChatIdOrderByTimestampDesc(String chatId);
-    List<Message> findTop100ByChatIdAndTimestampAfterOrderByTimestampDesc(String chatId, Instant lastMessageTimestamp);
+    List<Message> findTop100ByChatIdOrderByTimestampDesc(UUID chatId);
+    List<Message> findTop100ByChatIdAndTimestampAfterOrderByTimestampDesc(UUID chatId, Instant lastMessageTimestamp);
 }

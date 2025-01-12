@@ -2,13 +2,11 @@ package io.github.lumijiez.message.user.service;
 
 import io.github.lumijiez.message.jwt.JwtClaims;
 import io.github.lumijiez.message.user.entity.User;
-import io.github.lumijiez.message.user.exception.UserNotFoundException;
 import io.github.lumijiez.message.user.repository.UserRepository;
 import io.github.lumijiez.message.user.dto.response.GetSelfResponseDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -42,16 +40,13 @@ public class UserService {
                         .id(claims.getSub())
                         .email(claims.getEmail())
                         .username(claims.getUsername())
-                        .userChats(new ArrayList<>())
                         .build()));
 
         return GetSelfResponseDTO.from(user, "User data synchronized successfully.");
     }
 
-    public void exists(UUID id) {
-        if (!userRepository.existsById(id)) {
-            throw new UserNotFoundException();
-        }
+    public boolean exists(UUID id) {
+        return userRepository.existsById(id);
     }
 
     public List<User> findAllByIds(List<UUID> ids) {

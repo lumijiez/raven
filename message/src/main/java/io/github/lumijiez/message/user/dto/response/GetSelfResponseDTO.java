@@ -14,7 +14,6 @@ public class GetSelfResponseDTO {
     private UUID id;
     private String username;
     private String email;
-    private List<UUID> userChats;
     private String message;
 
     public static GetSelfResponseDTO from(User user, String message) {
@@ -22,7 +21,6 @@ public class GetSelfResponseDTO {
         response.setId(user.getId());
         response.setUsername(user.getUsername());
         response.setEmail(user.getEmail());
-        response.setUserChats(user.getUserChats());
         response.setMessage(message);
         return response;
     }

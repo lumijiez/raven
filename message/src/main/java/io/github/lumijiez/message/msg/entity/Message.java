@@ -1,7 +1,6 @@
 package io.github.lumijiez.message.msg.entity;
 
 import lombok.Data;
-import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -13,9 +12,9 @@ import java.util.UUID;
 public class Message {
 
     @Id
-    private ObjectId id;
+    private UUID id;
     private UUID sender;
-    private String chatId;
+    private UUID chatId;
     private Instant timestamp;
     private String content;
 }

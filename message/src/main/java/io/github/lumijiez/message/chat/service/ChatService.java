@@ -9,11 +9,13 @@ import io.github.lumijiez.message.chat.exception.ChatAlreadyExistsException;
 import io.github.lumijiez.message.chat.repository.ChatRepository;
 import io.github.lumijiez.message.jwt.JwtClaims;
 import io.github.lumijiez.message.user.entity.User;
+import io.github.lumijiez.message.user.exception.UserNotFoundException;
 import io.github.lumijiez.message.user.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -41,8 +43,8 @@ public class ChatService {
         UUID creatorId = claims.getSub();
         UUID chatPartner = request.getChatPartner();
 
-        userService.exists(creatorId);
-        userService.exists(chatPartner);
+        if (!userService.exists(creatorId)) throw new UserNotFoundException(creatorId.toString());
+        if (!userService.exists(chatPartner)) throw new UserNotFoundException(chatPartner.toString());
 
         if (chatRepository.findByParticipantsContains(creatorId).stream()
                 .filter(chat -> !chat.isGroupChat())
@@ -57,15 +59,13 @@ public class ChatService {
         chat.setGroupChat(false);
         Chat savedChat = chatRepository.save(chat);
 
-        List<User> users = userService.findAllByIds(chat.getParticipants());
-        for (User user : users) {
-            if (user.getUserChats() == null) {
-                user.setUserChats(new ArrayList<>());
-            }
-            user.getUserChats().add(savedChat.getId());
-            userService.save(user);
-        }
-
         return ChatCreateResponseDTO.from(ChatResponseDTO.from(savedChat));
+    }
+
+    @Transactional(readOnly = true)
+    public boolean hasAccessToChat(UUID userId, UUID chatId) {
+        return chatRepository.findById(chatId)
+                .map(chat -> chat.getParticipants().contains(userId))
+                .orElse(false);
     }
 }

@@ -1,13 +1,14 @@
 package io.github.lumijiez.message.msg.controller;
 
-import io.github.lumijiez.message.msg.request.MessageQueryRequest;
-import io.github.lumijiez.message.msg.request.MessageSendRequest;
-import io.github.lumijiez.message.msg.response.MessageQueryResponse;
-import io.github.lumijiez.message.msg.response.MessageSendResponse;
+import io.github.lumijiez.message.jwt.JwtClaims;
+import io.github.lumijiez.message.msg.dto.request.MessageQueryRequestDTO;
+import io.github.lumijiez.message.msg.dto.request.MessageSendRequestDTO;
+import io.github.lumijiez.message.msg.dto.response.MessageDTO;
+import io.github.lumijiez.message.msg.dto.response.MessageQueryResponseDTO;
 import io.github.lumijiez.message.msg.service.MessageService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,15 +21,17 @@ public class MessageController {
         this.messageService = messageService;
     }
 
-    @PostMapping("/getMessages")
-    public ResponseEntity<MessageQueryResponse> getMessages(@Valid @RequestBody MessageQueryRequest request) {
-        String sub = SecurityContextHolder.getContext().getAuthentication().getName();
-        return ResponseEntity.ok(messageService.getMessages(sub, request));
+    @PostMapping("/get")
+    public ResponseEntity<MessageQueryResponseDTO> getMessages(
+            @Valid @RequestBody MessageQueryRequestDTO request,
+            Authentication auth) {
+        return ResponseEntity.ok(messageService.getMessages((JwtClaims) auth.getDetails(), request));
     }
 
-    @PostMapping("/sendMessage")
-    public ResponseEntity<MessageSendResponse> sendMessage(@RequestBody MessageSendRequest request) {
-        String sub = SecurityContextHolder.getContext().getAuthentication().getName();
-        return ResponseEntity.status(201).body(messageService.sendMessage(sub, request));
+    @PostMapping("/send")
+    public ResponseEntity<MessageDTO> sendMessage(
+            @Valid @RequestBody MessageSendRequestDTO request,
+            Authentication auth) {
+        return ResponseEntity.ok(messageService.sendMessage((JwtClaims) auth.getDetails(), request));
     }
 }

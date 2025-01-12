@@ -1,5 +1,6 @@
-package io.github.lumijiez.message.chat.exception;
+package io.github.lumijiez.message.msg.exception;
 
+import io.github.lumijiez.message.chat.exception.ChatAlreadyExistsException;
 import io.github.lumijiez.message.common.dto.response.ApiResponseDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -11,7 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @Slf4j
 @RestControllerAdvice
-public class ChatExceptionHandler {
+public class MessageExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -23,20 +24,5 @@ public class ChatExceptionHandler {
                         .append(". "));
 
         return ApiResponseDTO.error(errorMessage.toString());
-    }
-
-    @ExceptionHandler(ChatNotFoundException.class)
-    public ApiResponseDTO<Void> handleChatNotFoundException(ChatNotFoundException ex) {
-        return ApiResponseDTO.error(ex.getMessage());
-    }
-
-    @ExceptionHandler(ChatAlreadyExistsException.class)
-    public ApiResponseDTO<Void> handleChatAlreadyExistsException(ChatAlreadyExistsException ex) {
-        return ApiResponseDTO.error(ex.getMessage());
-    }
-
-    @ExceptionHandler(ChatNoAccessException.class)
-    public ApiResponseDTO<Void> handleChatNoAccessException(ChatNoAccessException ex) {
-        return ApiResponseDTO.error(ex.getMessage());
     }
 }

@@ -1,69 +1,73 @@
 package io.github.lumijiez.message.msg.service;
 
-import io.github.lumijiez.message.msg.request.MessageQueryRequest;
-import io.github.lumijiez.message.msg.request.MessageSendRequest;
-import io.github.lumijiez.message.msg.response.MessageQueryResponse;
-import io.github.lumijiez.message.msg.response.MessageResponse;
-import io.github.lumijiez.message.msg.response.MessageSendResponse;
+import io.github.lumijiez.message.chat.exception.ChatNoAccessException;
+import io.github.lumijiez.message.chat.service.ChatService;
+import io.github.lumijiez.message.jwt.JwtClaims;
+import io.github.lumijiez.message.msg.dto.request.MessageQueryRequestDTO;
+import io.github.lumijiez.message.msg.dto.request.MessageSendRequestDTO;
+import io.github.lumijiez.message.msg.dto.response.MessageDTO;
+import io.github.lumijiez.message.msg.dto.response.MessageQueryResponseDTO;
 import io.github.lumijiez.message.msg.entity.Message;
 import io.github.lumijiez.message.msg.repository.MessageRepository;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.util.Optional;
+import java.util.List;
 import java.util.UUID;
 
 @Service
 public class MessageService {
-
+    private final ChatService chatService;
     private final MessageRepository messageRepository;
 
-    public MessageService(MessageRepository messageRepository) {
+    public MessageService(MessageRepository messageRepository, ChatService chatService) {
         this.messageRepository = messageRepository;
+        this.chatService = chatService;
     }
 
-    public MessageQueryResponse getMessages(String sub, MessageQueryRequest request) {
-        String chatId = request.getChatId();
-        String lastMessageId = request.getLastMessage();
-
-        MessageQueryResponse response = new MessageQueryResponse();
-
-        if (lastMessageId != null) {
-            Optional<Message> lastMessage = messageRepository.findById(lastMessageId);
-
-            if (lastMessage.isEmpty()) {
-                response.setError("Last message not found");
-                return response;
-            }
-
-            response.setMessageList(
-                    messageRepository.findTop100ByChatIdAndTimestampAfterOrderByTimestampDesc(
-                            chatId, lastMessage.get().getTimestamp())
-                    .stream()
-                    .map(MessageResponse::from)
-                    .toList());
-        } else {
-            response.setMessageList(messageRepository.findTop100ByChatIdOrderByTimestampDesc(chatId)
-                    .stream()
-                    .map(MessageResponse::from)
-                    .toList());
+    @Transactional(readOnly = true)
+    public MessageQueryResponseDTO getMessages(JwtClaims claims, MessageQueryRequestDTO request) {
+        if (!chatService.hasAccessToChat(claims.getSub(), request.getChatId())) {
+            throw new ChatNoAccessException();
         }
 
-        return response;
+        List<Message> messages;
+
+        if (request.getLastMessage() != null) {
+            Message lastMessage = messageRepository.findById(request.getLastMessage().toString())
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                            String.format("Last message not found with id: %s", request.getLastMessage())
+                    ));
+
+            messages = messageRepository.findTop100ByChatIdAndTimestampAfterOrderByTimestampDesc(
+                    request.getChatId(),
+                    lastMessage.getTimestamp()
+            );
+        } else {
+            messages = messageRepository.findTop100ByChatIdOrderByTimestampDesc(request.getChatId());
+        }
+
+        return MessageQueryResponseDTO.builder()
+                .messageList(messages)
+                .build();
     }
 
-    public MessageSendResponse sendMessage(String sub, MessageSendRequest request) {
+    @Transactional
+    public MessageDTO sendMessage(JwtClaims claims, MessageSendRequestDTO request) {
+        if (!chatService.hasAccessToChat(claims.getSub(), request.getChatId())) {
+            throw new AccessDeniedException("User does not have access to this chat");
+        }
+
         Message message = new Message();
-        message.setChatId(request.getChatId());
+        message.setId(UUID.randomUUID());
+        message.setSender(claims.getSub());
         message.setTimestamp(Instant.now());
-        message.setSender(UUID.fromString(sub));
+        message.setChatId(request.getChatId());
         message.setContent(request.getContent());
 
-        messageRepository.save(message);
-
-        MessageSendResponse response = new MessageSendResponse();
-        response.setMessage(message);
-
-        return response;
+        return MessageDTO.from(messageRepository.save(message));
     }
 }
