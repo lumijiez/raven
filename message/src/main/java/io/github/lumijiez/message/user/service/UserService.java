@@ -7,6 +7,7 @@ import io.github.lumijiez.message.user.dto.response.GetSelfResponseDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -48,11 +49,13 @@ public class UserService {
         return !userRepository.existsById(id);
     }
 
-//    public List<User> findAllByIds(List<UUID> ids) {
-//        return userRepository.findAllById(ids.stream().map(UUID::toString).toList());
-//    }
-//
-//    public void save(User user) {
-//        userRepository.save(user);
-//    }
+    @SuppressWarnings("unused")
+    public List<User> findAllByIds(List<UUID> ids) {
+        return userRepository.findAllById(ids.stream().map(UUID::toString).toList());
+    }
+
+    @SuppressWarnings("unused")
+    public void save(User user) {
+        userRepository.save(user);
+    }
 }
