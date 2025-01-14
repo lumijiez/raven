@@ -27,3 +27,7 @@ spring:
     user:
       name: raven
       password: raven
+
+logging:
+  level:
+    root: WARN

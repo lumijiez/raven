@@ -12,5 +12,6 @@
     <modules>
         <module>auth</module>
         <module>message</module>
+        <module>relay</module>
     </modules>
 </project>
