@@ -18,14 +18,14 @@ public class ApiResponseDTO<T> {
     private String error;
     private LocalDateTime timestamp;
 
-//    public static <T> ApiResponseDTO<T> success(T data) {
-//        return ApiResponseDTO.<T>builder()
-//                .data(data)
-//                .timestamp(LocalDateTime.now())
-//                .build();
-//    }
+    public static <T> ApiResponseDTO<T> success(T data) {
+        return ApiResponseDTO.<T>builder()
+                .data(data)
+                .timestamp(LocalDateTime.now())
+                .build();
+    }
 
-    public static <T> ApiResponseDTO<T> error(String error) {
+    public static <T> ApiResponseDTO<T> failure(String error) {
         return ApiResponseDTO.<T>builder()
                 .error(error)
                 .timestamp(LocalDateTime.now())

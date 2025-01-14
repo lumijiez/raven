@@ -22,6 +22,6 @@ public class MessageExceptionHandler {
                         .append(error.getDefaultMessage())
                         .append(". "));
 
-        return ApiResponseDTO.error(errorMessage.toString());
+        return ApiResponseDTO.failure(errorMessage.toString());
     }
 }

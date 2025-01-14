@@ -2,10 +2,11 @@ package io.github.lumijiez.message.jwt;
 
 import lombok.Data;
 
+import java.security.Principal;
 import java.util.UUID;
 
 @Data
-public class JwtClaims {
+public class JwtClaims implements Principal {
     private UUID sub;
     private String username;
     private String email;
@@ -26,5 +27,10 @@ public class JwtClaims {
         dto.setError(error);
         dto.setSuccess(false);
         return dto;
+    }
+
+    @Override
+    public String getName() {
+        return sub != null ? sub.toString() : null;
     }
 }

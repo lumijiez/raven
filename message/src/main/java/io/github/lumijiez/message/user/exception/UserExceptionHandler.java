@@ -11,6 +11,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class UserExceptionHandler {
     @ExceptionHandler(UserNotFoundException.class)
     public ApiResponseDTO<Void> handleUserNotFoundException(UserNotFoundException ex) {
-        return ApiResponseDTO.error(ex.getMessage());
+        return ApiResponseDTO.failure(ex.getMessage());
     }
 }

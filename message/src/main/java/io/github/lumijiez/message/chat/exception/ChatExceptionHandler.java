@@ -22,21 +22,21 @@ public class ChatExceptionHandler {
                         .append(error.getDefaultMessage())
                         .append(". "));
 
-        return ApiResponseDTO.error(errorMessage.toString());
+        return ApiResponseDTO.failure(errorMessage.toString());
     }
 
     @ExceptionHandler(ChatNotFoundException.class)
     public ApiResponseDTO<Void> handleChatNotFoundException(ChatNotFoundException ex) {
-        return ApiResponseDTO.error(ex.getMessage());
+        return ApiResponseDTO.failure(ex.getMessage());
     }
 
     @ExceptionHandler(ChatAlreadyExistsException.class)
     public ApiResponseDTO<Void> handleChatAlreadyExistsException(ChatAlreadyExistsException ex) {
-        return ApiResponseDTO.error(ex.getMessage());
+        return ApiResponseDTO.failure(ex.getMessage());
     }
 
     @ExceptionHandler(ChatNoAccessException.class)
     public ApiResponseDTO<Void> handleChatNoAccessException(ChatNoAccessException ex) {
-        return ApiResponseDTO.error(ex.getMessage());
+        return ApiResponseDTO.failure(ex.getMessage());
     }
 }

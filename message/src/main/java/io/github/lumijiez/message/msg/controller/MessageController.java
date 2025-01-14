@@ -8,17 +8,19 @@ import io.github.lumijiez.message.msg.dto.response.MessageQueryResponseDTO;
 import io.github.lumijiez.message.msg.service.MessageService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/message")
 public class MessageController {
-
     private final MessageService messageService;
+    private final SimpMessagingTemplate messagingTemplate;
 
-    public MessageController(MessageService messageService) {
+    public MessageController(MessageService messageService, SimpMessagingTemplate messagingTemplate) {
         this.messageService = messageService;
+        this.messagingTemplate = messagingTemplate;
     }
 
     @PostMapping("/get")
@@ -32,6 +34,8 @@ public class MessageController {
     public ResponseEntity<MessageDTO> sendMessage(
             @Valid @RequestBody MessageSendRequestDTO request,
             Authentication auth) {
-        return ResponseEntity.ok(messageService.sendMessage((JwtClaims) auth.getDetails(), request));
+        MessageDTO response = messageService.sendMessage((JwtClaims) auth.getDetails(), request);
+        messagingTemplate.convertAndSend("/topic/chat." + request.getChatId(), response);
+        return ResponseEntity.ok(response);
     }
 }
