@@ -16,11 +16,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/message")
 public class MessageController {
     private final MessageService messageService;
-    private final SimpMessagingTemplate messagingTemplate;
 
-    public MessageController(MessageService messageService, SimpMessagingTemplate messagingTemplate) {
+    public MessageController(MessageService messageService) {
         this.messageService = messageService;
-        this.messagingTemplate = messagingTemplate;
     }
 
     @PostMapping("/get")
@@ -35,7 +33,6 @@ public class MessageController {
             @Valid @RequestBody MessageSendRequestDTO request,
             Authentication auth) {
         MessageDTO response = messageService.sendMessage((JwtClaims) auth.getDetails(), request);
-        messagingTemplate.convertAndSend("/topic/chat." + request.getChatId(), response);
         return ResponseEntity.ok(response);
     }
 }
