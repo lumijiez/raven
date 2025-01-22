@@ -1,6 +1,6 @@
 package io.github.lumijiez.relay.controller;
 
-import io.github.lumijiez.relay.dto.ChatMessage;
+import io.github.lumijiez.model.kafka.KafkaMessage;
 import io.github.lumijiez.relay.security.jwt.JwtClaims;
 import io.github.lumijiez.relay.service.RelayService;
 import lombok.extern.slf4j.Slf4j;
@@ -16,30 +16,26 @@ import java.time.LocalDateTime;
 public class RelayController {
 
     private final RelayService relayService;
-    private final SimpMessagingTemplate messagingTemplate;
 
-    public RelayController(RelayService relayService, SimpMessagingTemplate messagingTemplate) {
+    public RelayController(RelayService relayService) {
         this.relayService = relayService;
-        this.messagingTemplate = messagingTemplate;
     }
 
     @MessageMapping("/chat.send")
-    public void sendMessage(ChatMessage message, Principal principal) {
+    public void sendMessage(KafkaMessage kafkaMessage, Principal principal) {
         if (principal == null) {
-            log.warn("Received message with null principal");
+            log.warn("Received kafkaMessage with null principal");
             return;
         }
 
         if (!(principal instanceof JwtClaims claims)) {
-            log.warn("Received message with invalid principal type: {}", principal.getClass());
+            log.warn("Received kafkaMessage with invalid principal type: {}", principal.getClass());
             return;
         }
 
-        message.setSenderUsername(claims.getUsername());
-        message.setSenderId(claims.getSub());
-        message.setTimestamp(LocalDateTime.now());
+        kafkaMessage.setSenderId(claims.getSub());
+        kafkaMessage.setTimestamp(LocalDateTime.now());
 
-        ChatMessage processedMessage = relayService.processMessage(message);
-        messagingTemplate.convertAndSend("/topic/" + message.getChatId(), processedMessage);
+        relayService.processMessage(kafkaMessage);
     }
 }

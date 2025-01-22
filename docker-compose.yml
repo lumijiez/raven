@@ -11,8 +11,8 @@ services:
 
   message_raven:
     build:
-      context: ./message
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: message/Dockerfile
     ports:
       - "8001:8080"
     depends_on:
@@ -21,8 +21,8 @@ services:
 
   relay_raven:
     build:
-      context: ./relay
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: relay/Dockerfile
     ports:
       - "8002:8080"
     depends_on:

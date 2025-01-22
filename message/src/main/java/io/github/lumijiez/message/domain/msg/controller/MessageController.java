@@ -7,7 +7,7 @@ import io.github.lumijiez.message.domain.msg.dto.request.MessageSendRequestDTO;
 import io.github.lumijiez.message.domain.msg.dto.response.MessageDTO;
 import io.github.lumijiez.message.domain.msg.dto.response.MessageQueryResponseDTO;
 import io.github.lumijiez.message.domain.msg.service.MessageService;
-import jakarta.annotation.security.PermitAll;
+import io.github.lumijiez.model.kafka.KafkaMessageResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -40,9 +40,8 @@ public class MessageController {
     }
 
     @PostMapping("/test-kafka/{chatId}")
-    public ResponseEntity<String> testKafka(@PathVariable String chatId, @RequestParam String message) {
-        String topic = "chat." + chatId;
-        kafkaProducer.sendMessage(topic, message);
+    public ResponseEntity<String> testKafka(@PathVariable String chatId, @RequestParam KafkaMessageResponse message) {
+        kafkaProducer.sendToClient(message);
         return ResponseEntity.ok("Sent to Kafka successfully");
     }
 }

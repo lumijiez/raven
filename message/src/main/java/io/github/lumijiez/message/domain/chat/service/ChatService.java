@@ -39,7 +39,7 @@ public class ChatService {
         UUID chatPartner = request.getChatPartner();
 
         if (userService.notExists(creatorId)) throw new UserNotFoundException(creatorId.toString());
-        if (!userService.notExists(chatPartner)) throw new UserNotFoundException(chatPartner.toString());
+        if (userService.notExists(chatPartner)) throw new UserNotFoundException(chatPartner.toString());
 
         if (chatRepository.findByParticipantsContains(creatorId).stream()
                 .filter(chat -> !chat.isGroupChat())

@@ -1,4 +1,4 @@
-package io.github.lumijiez.message.broker;
+package io.github.lumijiez.relay.broker;
 
 import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.context.annotation.Bean;
