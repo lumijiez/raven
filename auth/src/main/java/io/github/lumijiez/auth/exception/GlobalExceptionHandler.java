@@ -6,7 +6,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 
@@ -15,8 +14,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiResponseDTO<Void> handleMethodArgumentNotValidException(final MethodArgumentNotValidException ex) {
+    public ResponseEntity<ApiResponseDTO<Void>> handleMethodArgumentNotValidException(final MethodArgumentNotValidException ex) {
         StringBuilder errorMessage = new StringBuilder();
 
         ex.getBindingResult().getFieldErrors().forEach(error ->
@@ -25,21 +23,29 @@ public class GlobalExceptionHandler {
                         .append(". ")
         );
 
-        return ApiResponseDTO.error(errorMessage.toString());
+        return ResponseEntity
+                .badRequest()
+                .body(ApiResponseDTO.error(errorMessage.toString()));
     }
 
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<ApiResponseDTO<Void>> handleUserNotFoundException(UserNotFoundException ex) {
-        return new ResponseEntity<>(ApiResponseDTO.error(ex.getMessage()), HttpStatus.NOT_FOUND);
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(ApiResponseDTO.error(ex.getMessage()));
     }
 
     @ExceptionHandler(UserAlreadyExistsException.class)
-    public ApiResponseDTO<Void> handleUserAlreadyExistsException(UserAlreadyExistsException ex) {
-        return ApiResponseDTO.error(ex.getMessage());
+    public ResponseEntity<ApiResponseDTO<Void>> handleUserAlreadyExistsException(UserAlreadyExistsException ex) {
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(ApiResponseDTO.error(ex.getMessage()));
     }
 
     @ExceptionHandler(IncorrectCredentialsException.class)
-    public ApiResponseDTO<Void> handlerIncorrectCredentialsException(IncorrectCredentialsException ex) {
-        return ApiResponseDTO.error(ex.getMessage());
+    public ResponseEntity<ApiResponseDTO<Void>> handleIncorrectCredentialsException(IncorrectCredentialsException ex) {
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(ApiResponseDTO.error(ex.getMessage()));
     }
 }
