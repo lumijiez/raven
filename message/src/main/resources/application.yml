@@ -4,7 +4,7 @@ spring:
 
     data:
         mongodb:
-            uri: mongodb://raven:raven@mongodb_raven:27018/raven?authSource=admin
+            uri: mongodb://raven:raven@mongodb:27018/raven?authSource=admin
 
     kafka:
         bootstrap-servers: kafka:9092

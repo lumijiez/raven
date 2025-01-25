@@ -1,63 +1,77 @@
 services:
-  auth_raven:
+#  ui:
+#    image: node:20-alpine
+#    working_dir: /app
+#    volumes:
+#      - ./ui:/app
+#      - /app/node_modules
+#    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+
+  ui:
+    image: node:20-alpine
+    working_dir: /app
+    volumes:
+      - ./ui:/app
+      - /app/node_modules
+    command: sh -c "npm install && npm run build && npm run preview -- --host 0.0.0.0 --port 80"
+
+  auth:
     build:
-      context: ./auth
-      dockerfile: Dockerfile
-    ports:
-      - "8000:8080"
+      context: .
+      dockerfile: auth/Dockerfile
     depends_on:
-      postgres_raven:
+      postgres:
         condition: service_healthy
 
-  message_raven:
+  message:
     build:
       context: .
       dockerfile: message/Dockerfile
-    ports:
-      - "8001:8080"
     depends_on:
-      - mongodb_raven
+      - mongodb
       - kafka
 
-  relay_raven:
+  relay:
     build:
       context: .
       dockerfile: relay/Dockerfile
-    ports:
-      - "8002:8080"
-    depends_on:
-      - mongodb_raven
 
-  postgres_raven:
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx:/etc/nginx/ssl:ro
+    depends_on:
+      - ui
+      - auth
+      - message
+      - relay
+
+  postgres:
     image: postgres:latest
     environment:
       - "POSTGRES_DB=raven"
       - "POSTGRES_USER=raven"
       - "POSTGRES_PASSWORD=raven"
-    ports:
-      - "5432:5432"
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U raven" ]
       interval: 5s
       timeout: 5s
       retries: 100
 
-  mongodb_raven:
+  mongodb:
     image: mongo:latest
     command: mongod --quiet --logpath /dev/null --port 27018
     environment:
       MONGO_INITDB_ROOT_USERNAME: raven
       MONGO_INITDB_ROOT_PASSWORD: raven
       MONGO_INITDB_DATABASE: raven
-    ports:
-      - "27018:27018"
-    logging:
-      driver: "none"
 
   kafka:
     image: confluentinc/cp-kafka:latest
-    ports:
-      - "9092:9092"
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_NODE_ID: 1

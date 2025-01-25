@@ -8,10 +8,12 @@ import io.github.lumijiez.auth.dto.request.RegisterRequestDTO;
 import io.github.lumijiez.auth.dto.response.UserDetailsDTO;
 import io.github.lumijiez.auth.service.UserService;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@Slf4j
 @RequestMapping("/auth")
 public class AuthController {
 
@@ -22,7 +24,8 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponseDTO> login(@Valid @RequestBody LoginRequestDTO request) {
+    public ResponseEntity<AuthResponseDTO> login(@RequestBody LoginRequestDTO request) {
+        log.info("Login request: {}", request);
         return ResponseEntity.ok(userService.authenticateUser(request));
     }
 

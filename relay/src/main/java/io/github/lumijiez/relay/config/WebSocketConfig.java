@@ -4,7 +4,6 @@ import io.github.lumijiez.relay.security.jwt.JwtClaims;
 import io.github.lumijiez.relay.security.jwt.JwtUtil;
 import lombok.NonNull;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
