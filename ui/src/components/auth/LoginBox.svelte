@@ -1,12 +1,19 @@
 <script>
-    import {jwtToken} from "../stores/connection.js";
+    import { jwtToken } from "../../stores/connection.js";
     import api from "$lib/axios.js";
     import { toast } from "svelte-sonner";
+    import { goto } from "$app/navigation";
+
+    export let authMode;
 
     let usernameOrEmail = '';
     let password = '';
+    let loading = false;
 
-    async function handleSubmit() {
+    async function handleLogin() {
+        if (loading) return;
+
+        loading = true;
         try {
             const response = await api.post('auth/login', {
                 usernameOrEmail,
@@ -16,22 +23,24 @@
             const token = response.data.token;
             if (token && token.trim() !== '') {
                 jwtToken.set(token);
-                toast("Login successful!");
+                toast.success("Login successful!");
             } else {
-                toast("Invalid token received");
+                toast.error("Invalid token received");
             }
         } catch (error) {
-            toast(`Login Error (${error.response?.status || 'Unknown'}): ${error.response?.data?.error || error.message}`);
+            toast.error(`Login Error (${error.response?.status || 'Unknown'}): ${error.response?.data?.error || error.message}`);
+        } finally {
+            loading = false;
         }
     }
 </script>
 
-<form on:submit|preventDefault={handleSubmit} class="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
+<form on:submit|preventDefault={handleLogin}>
     <h2 class="text-2xl font-bold mb-6 text-center">Login</h2>
 
     <div class="mb-4">
         <label for="username" class="block mb-2 text-sm font-medium">
-            Username
+            Username or Email
         </label>
         <input
                 type="text"
@@ -58,7 +67,8 @@
     <button
             type="submit"
             class="w-full py-2 px-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-50"
+            disabled={loading}
     >
-        Login
+        {loading ? 'Logging in...' : 'Login'}
     </button>
 </form>
