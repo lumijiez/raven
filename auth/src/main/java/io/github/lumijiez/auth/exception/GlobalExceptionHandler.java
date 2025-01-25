@@ -29,8 +29,8 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(UserNotFoundException.class)
-    public ApiResponseDTO<Void> handleUserNotFoundException(UserNotFoundException ex) {
-        return ApiResponseDTO.error(ex.getMessage());
+    public ResponseEntity<ApiResponseDTO<Void>> handleUserNotFoundException(UserNotFoundException ex) {
+        return new ResponseEntity<>(ApiResponseDTO.error(ex.getMessage()), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(UserAlreadyExistsException.class)

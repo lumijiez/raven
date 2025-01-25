@@ -1,6 +1,7 @@
 <script>
     import {jwtToken} from "../stores/connection.js";
     import api from "$lib/axios.js";
+    import { toast } from "svelte-sonner";
 
     let usernameOrEmail = '';
     let password = '';
@@ -10,6 +11,8 @@
             usernameOrEmail,
             password,
         });
+
+        toast("Login successful!");
 
         jwtToken.set(response.data.token);
     }
