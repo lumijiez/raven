@@ -1,7 +1,11 @@
-<script>
+<script lang="ts">
     import { jwtToken } from "../../stores/connection.js";
     import api from "$lib/axios.js";
     import { toast } from "svelte-sonner";
+    import { Input } from "$lib/shad/ui/input/index.js";
+    import { Label } from "$lib/shad/ui/label/index.js";
+    import { Button } from "$lib/shad/ui/button/index.js";
+    import { fade } from 'svelte/transition';
 
     export let authMode;
 
@@ -42,66 +46,64 @@
     }
 </script>
 
-<form on:submit|preventDefault={handleRegister}>
-    <h2 class="text-2xl font-bold mb-6 text-center">Register</h2>
-
-    <div class="mb-4">
-        <label for="username" class="block mb-2 text-sm font-medium">
-            Username
-        </label>
-        <input
+<form
+        on:submit|preventDefault={handleRegister}
+        class="space-y-4"
+        in:fade
+>
+    <div class="space-y-2">
+        <Label for="username" class="text-gray-700">Username</Label>
+        <Input
                 type="text"
                 id="username"
                 bind:value={username}
-                class="w-full px-3 py-2 border rounded-md"
+                placeholder="Choose a username"
+                class="border-gray-300 focus:border-green-500 focus:ring focus:ring-green-200 transition-all"
                 required
         />
     </div>
 
-    <div class="mb-4">
-        <label for="email" class="block mb-2 text-sm font-medium">
-            Email
-        </label>
-        <input
+    <div class="space-y-2">
+        <Label for="email" class="text-gray-700">Email</Label>
+        <Input
                 type="email"
                 id="email"
                 bind:value={email}
-                class="w-full px-3 py-2 border rounded-md"
+                placeholder="Enter your email"
+                class="border-gray-300 focus:border-green-500 focus:ring focus:ring-green-200 transition-all"
                 required
         />
     </div>
 
-    <div class="mb-4">
-        <label for="password" class="block mb-2 text-sm font-medium">
-            Password
-        </label>
-        <input
+    <div class="space-y-2">
+        <Label for="password" class="text-gray-700">Password</Label>
+        <Input
                 type="password"
                 id="password"
                 bind:value={password}
-                class="w-full px-3 py-2 border rounded-md"
+                placeholder="Create a password"
+                class="border-gray-300 focus:border-green-500 focus:ring focus:ring-green-200 transition-all"
                 required
         />
     </div>
 
-    <div class="mb-6">
-        <label for="confirm-password" class="block mb-2 text-sm font-medium">
-            Confirm Password
-        </label>
-        <input
+    <div class="space-y-2">
+        <Label for="confirm-password" class="text-gray-700">Confirm Password</Label>
+        <Input
                 type="password"
                 id="confirm-password"
                 bind:value={confirmPassword}
-                class="w-full px-3 py-2 border rounded-md"
+                placeholder="Confirm your password"
+                class="border-gray-300 focus:border-green-500 focus:ring focus:ring-green-200 transition-all"
                 required
         />
     </div>
 
-    <button
+    <Button
             type="submit"
-            class="w-full py-2 px-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-50"
+            class="w-full bg-gradient-to-r from-green-400 to-teal-500 hover:from-green-500 hover:to-teal-600 transition-all"
             disabled={loading}
     >
-        {loading ? 'Registering...' : 'Register'}
-    </button>
+        {loading ? 'Registering...' : 'Create Account'}
+    </Button>
 </form>

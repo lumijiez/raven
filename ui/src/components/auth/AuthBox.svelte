@@ -1,39 +1,74 @@
-<script>
+<script lang="ts">
     import { writable } from 'svelte/store';
+    import { slide } from 'svelte/transition';
     import LoginBox from './LoginBox.svelte';
     import RegisterBox from './RegisterBox.svelte';
 
     const authMode = writable('login');
+    const modes = {
+        login: {
+            title: 'Welcome Back',
+            subtitle: 'Sign in to continue',
+            bgGradient: 'from-blue-500 to-purple-600',
+            icon: 'login'
+        },
+        register: {
+            title: 'Get Started',
+            subtitle: 'Create your account',
+            bgGradient: 'from-green-400 to-teal-500',
+            icon: 'user-plus'
+        }
+    };
 </script>
 
-<div class="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
-    {#if $authMode === 'login'}
-        <LoginBox {authMode} />
-    {:else}
-        <RegisterBox {authMode} />
-    {/if}
+<div
+        class="relative w-full max-w-md my-auto mx-auto bg-white shadow-2xl rounded-2xl overflow-hidden"
+        transition:slide
+>
+    <div
+            class={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${modes[$authMode].bgGradient}`}
+    ></div>
 
-    <div class="mt-4 text-center">
+    <div class="px-8 py-12">
+        <div class="flex items-center mb-8">
+            <div>
+                <h2 class="text-3xl font-bold text-gray-800">
+                    {modes[$authMode].title}
+                </h2>
+                <p class="text-gray-500">
+                    {modes[$authMode].subtitle}
+                </p>
+            </div>
+        </div>
+
         {#if $authMode === 'login'}
-            <p>
-                Don't have an account?
-                <button
-                        on:click={() => $authMode = 'register'}
-                        class="text-blue-500 hover:underline"
-                >
-                    Register
-                </button>
-            </p>
+            <LoginBox {authMode} />
         {:else}
-            <p>
-                Already have an account?
-                <button
-                        on:click={() => $authMode = 'login'}
-                        class="text-blue-500 hover:underline"
-                >
-                    Login
-                </button>
-            </p>
+            <RegisterBox {authMode} />
         {/if}
+
+        <div class="mt-6 text-center">
+            {#if $authMode === 'login'}
+                <p class="text-gray-600">
+                    Don't have an account?
+                    <button
+                            on:click={() => $authMode = 'register'}
+                            class="text-blue-600 font-semibold hover:underline"
+                    >
+                        Sign Up
+                    </button>
+                </p>
+            {:else}
+                <p class="text-gray-600">
+                    Already have an account?
+                    <button
+                            on:click={() => $authMode = 'login'}
+                            class="text-green-600 font-semibold hover:underline"
+                    >
+                        Sign In
+                    </button>
+                </p>
+            {/if}
+        </div>
     </div>
 </div>
