@@ -7,14 +7,22 @@
     let password = '';
 
     async function handleSubmit() {
-        const response = await api.post('auth/login', {
-            usernameOrEmail,
-            password,
-        });
+        try {
+            const response = await api.post('auth/login', {
+                usernameOrEmail,
+                password,
+            });
 
-        toast("Login successful!");
-
-        jwtToken.set(response.data.token);
+            const token = response.data.token;
+            if (token && token.trim() !== '') {
+                jwtToken.set(token);
+                toast("Login successful!");
+            } else {
+                toast("Invalid token received");
+            }
+        } catch (error) {
+            toast(`Login Error (${error.response?.status || 'Unknown'}): ${error.response?.data?.error || error.message}`);
+        }
     }
 </script>
 

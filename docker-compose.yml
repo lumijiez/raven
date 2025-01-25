@@ -1,19 +1,19 @@
 services:
-#  ui:
-#    image: node:20-alpine
-#    working_dir: /app
-#    volumes:
-#      - ./ui:/app
-#      - /app/node_modules
-#    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
-
   ui:
     image: node:20-alpine
     working_dir: /app
     volumes:
       - ./ui:/app
       - /app/node_modules
-    command: sh -c "npm install && npm run build && npm run preview -- --host 0.0.0.0 --port 80"
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+
+#  ui:
+#    image: node:20-alpine
+#    working_dir: /app
+#    volumes:
+#      - ./ui:/app
+#      - /app/node_modules
+#    command: sh -c "npm install && npm run build && npm run preview -- --host 0.0.0.0 --port 80"
 
   auth:
     build:
