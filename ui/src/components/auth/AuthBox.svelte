@@ -23,13 +23,16 @@
 
 <div
         class="relative w-full max-w-md my-auto mx-auto bg-white shadow-2xl rounded-2xl overflow-hidden"
-        transition:slide
+        in:slide
 >
+    <div class="font-gilroy flex justify-center align-middle pt-6">
+        <h1 class="text-6xl">RAVEN</h1>
+    </div>
     <div
             class={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${modes[$authMode].bgGradient}`}
     ></div>
 
-    <div class="px-8 py-12">
+    <div class="px-8 py-6">
         <div class="flex items-center mb-8">
             <div>
                 <h2 class="text-3xl font-bold text-gray-800">
