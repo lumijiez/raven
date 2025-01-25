@@ -3,6 +3,7 @@
     import { slide } from 'svelte/transition';
     import LoginBox from './LoginBox.svelte';
     import RegisterBox from './RegisterBox.svelte';
+    import Background from "./Background.svelte";
 
     const authMode = writable('login');
     const modes = {
