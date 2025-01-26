@@ -18,3 +18,5 @@ logging:
         root: WARN
         org.apache.kafka: WARN
         org.springframework.kafka: WARN
+        org.springframework.security.messaging.web.socket: DEBUG
+        org.springframework.web.socket.server: DEBUG

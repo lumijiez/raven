@@ -58,7 +58,7 @@
 
 <div class="flex flex-col flex-1 h-screen bg-gray-50">
     {#if $selectedChatId}
-        <div in:fade class="min-h-18 shadow-sm bg-white z-10 p-3 flex items-center space-x-3">
+        <div class="min-h-18 shadow-sm bg-white z-10 p-3 flex items-center space-x-3">
             <div class={`bg-gradient-to-r ${randomColor} rounded-full w-10 h-10 flex items-center justify-center`}>
                 <MessageCircle class="text-white" size={20} />
             </div>

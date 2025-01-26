@@ -1,5 +1,5 @@
 <script>
-    import {isLoggedIn} from "../stores/connection.js";
+    import {isLoggedIn, isConnected, sockJsConnection, stompJsConnection} from "../stores/connection.js";
     import { Toaster } from "$lib/shad/ui/sonner";
     import AuthBox from "../components/auth/AuthBox.svelte";
     import Background from "../components/auth/Background.svelte";
@@ -7,9 +7,30 @@
     import {toast} from "svelte-sonner";
     import api from "$lib/axios.js";
     import ChatPage from "../components/chat/ChatPage.svelte";
+    import SockJS from 'sockjs-client';
+    import { Stomp } from '@stomp/stompjs';
 
-    async function connectStomp() {
+    import 'sockjs-client/lib/utils/browser-crypto.js';
 
+    async function connectWebSocket() {
+        const socket = new SockJS('https://lumijiez.pw/ws');
+        const stompClient = Stomp.over(socket);
+
+        stompJsConnection.set(stompClient);
+        sockJsConnection.set(socket);
+
+        stompClient.connect(
+            {},
+            () => {
+                isConnected.set(true);
+                console.log('WebSocket Connected');
+            },
+            (error) => {
+                isConnected.set(false);
+                console.error('WebSocket Connection Error:', error.message);
+                toast.error(`WebSocket Connection Failed: ${error.message}`);
+            }
+        );
     }
 
     onMount(async () => {
@@ -19,6 +40,8 @@
             if (response.status === 200) {
                 isLoggedIn.set(true);
                 toast.success("Refreshed session successfully.");
+
+                await connectWebSocket();
             }
         } catch (error) {
             if (error.response?.status === 403) {

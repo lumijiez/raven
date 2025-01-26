@@ -24,6 +24,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
                 .setAllowedOriginPatterns(
+                        "https://lumijiez.pw",
                         "http://*:[*]",
                         "https://*:[*]",
                         "http://*",
