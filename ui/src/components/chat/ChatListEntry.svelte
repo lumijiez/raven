@@ -18,7 +18,7 @@
 <div
         tabindex="0"
         role="button"
-        class="p-3 border-b border-gray-200 cursor-pointer hover:bg-gray-100 flex items-center space-x-3 transition-colors relative"
+        class="p-3 border-b border-gray-200 cursor-pointer hover:bg-gray-100 flex items-center space-x-3 transition-colors relative z-10 bg-white"
         on:click={onSelect}
         on:keydown={(e) => { if (e.key === 'Enter' || e.key === ' ') onSelect(); }}
 >

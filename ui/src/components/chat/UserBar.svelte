@@ -30,9 +30,9 @@
     }
 </script>
 
-<div class="relative bg-white shadow-md overflow-hidden">
+<div class="relative bg-white shadow-md overflow-hidden h-20 flex items-center px-4">
     <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-purple-600"></div>
-    <div class="p-4 flex items-center justify-between">
+    <div class="flex items-center justify-between w-full">
         <div class="flex items-center space-x-4">
             <div class="bg-gradient-to-r from-blue-500 to-purple-600 rounded-full w-12 h-12 flex items-center justify-center">
                 <User class="text-white" />
