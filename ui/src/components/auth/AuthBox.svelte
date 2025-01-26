@@ -3,7 +3,6 @@
     import { slide } from 'svelte/transition';
     import LoginBox from './LoginBox.svelte';
     import RegisterBox from './RegisterBox.svelte';
-    import Background from "./Background.svelte";
 
     const authMode = writable('login');
     const modes = {
@@ -22,11 +21,23 @@
     };
 </script>
 
+<style>
+    @font-face {
+        font-family: 'GilroyBoldItalic';
+        src: url('/fonts/gilroy/Gilroy-BoldItalic.ttf') format('truetype');
+        font-weight: 700;
+        font-style: italic;
+    }
+
+    .icon {
+        font-family: 'GilroyBoldItalic', sans-serif;
+    }
+</style>
+
 <div
-        class="relative w-full max-w-md my-auto mx-auto bg-white shadow-2xl rounded-2xl overflow-hidden"
-        in:slide
+        class="relative w-full max-w-md my-auto mx-auto-[2] bg-white shadow-2xl rounded-2xl overflow-hidden"
 >
-    <div class="font-gilroy flex justify-center align-middle pt-6">
+    <div class="icon flex justify-center align-middle pt-6">
         <h1 class="text-6xl">RAVEN</h1>
     </div>
     <div
