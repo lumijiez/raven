@@ -3,15 +3,10 @@
     import {username} from "../stores/user";
     import {email} from "../stores/user";
     import {onMount} from "svelte";
-    import {jwtToken} from "../stores/connection.js";
     import api from "$lib/axios";
 
     onMount(async () => {
-        const response = await api.get('api/user/self', {
-            headers: {
-                'Authorization': `Bearer ${$jwtToken}`,
-            }
-        });
+        const response = await api.get('api/user/self');
 
         console.log(response);
         id.set(response.data.id);

@@ -1,6 +1,5 @@
 <script>
     import { chatList } from "../stores/chats.js";
-    import { jwtToken } from "../stores/connection.js";
     import ChatListEntry from "./ChatListEntry.svelte";
     import { writable } from "svelte/store";
     import { onMount } from "svelte";
@@ -15,14 +14,7 @@
 
     async function fetchMessages(chatId) {
         try {
-            const response = await api.post('api/message/get', { chatId },
-                {
-                    headers: {
-                        'Authorization': `Bearer ${$jwtToken}`,
-                    }
-                }
-            );
-
+            const response = await api.post('api/message/get', { chatId });
             messages.set(response.data.messageList);
         } catch (error) {
             messages.set([]);
@@ -30,12 +22,7 @@
     }
 
     onMount(async () => {
-        const response = await api.get('api/chat/get-all', {
-            headers: {
-                'Authorization': `Bearer ${$jwtToken}`,
-            }
-        })
-
+        const response = await api.get('api/chat/get-all');
         chatList.set(response.data);
     })
 </script>

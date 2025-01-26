@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { jwtToken } from "../../stores/connection.js";
+    import {isLoggedIn} from "../../stores/connection.js";
     import api from "$lib/axios.js";
     import { toast } from "svelte-sonner";
     import { Input } from "$lib/shad/ui/input/index.js";
@@ -18,17 +18,16 @@
 
         loading = true;
         try {
-            const response = await api.post('auth/login', {
+            await api.post('auth/login', {
                 usernameOrEmail,
                 password,
             });
 
-            const token = response.data.token;
-            if (token && token.trim() !== '') {
-                jwtToken.set(token);
-                toast.success("Login successful!");
-            } else {
-                toast.error("Invalid token received");
+            const loginCheck = await api.get('auth/check-login');
+
+            if (loginCheck.status === 200) {
+                isLoggedIn.set(true);
+                toast.success("Logged in successfully.");
             }
         } catch (error) {
             toast.error(`Login Error (${error.response?.status || 'Unknown'}): ${error.response?.data?.error || error.message}`);

@@ -1,11 +1,11 @@
 <script lang="ts">
-    import { jwtToken } from "../../stores/connection.js";
     import api from "$lib/axios.js";
     import { toast } from "svelte-sonner";
     import { Input } from "$lib/shad/ui/input/index.js";
     import { Label } from "$lib/shad/ui/label/index.js";
     import { Button } from "$lib/shad/ui/button/index.js";
     import { fade } from 'svelte/transition';
+    import { isLoggedIn } from "../../stores/connection";
 
     export let authMode;
 
@@ -31,12 +31,11 @@
                 password,
             });
 
-            const token = response.data.token;
-            if (token && token.trim() !== '') {
-                jwtToken.set(token);
-                toast.success("Registration successful!");
-            } else {
-                toast.error("Invalid token received");
+            const loginCheck = await api.get('auth/check-login');
+
+            if (loginCheck.status === 200) {
+                isLoggedIn.set(true);
+                toast.success("Registered successfully.");
             }
         } catch (error) {
             toast.error(`Registration Error (${error.response?.status || 'Unknown'}): ${error.response?.data?.error || error.message}`);
