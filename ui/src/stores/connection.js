@@ -1,3 +1,3 @@
 import {writable} from "svelte/store";
 
-export const jwtToken = writable('');
+export const isLoggedIn = writable(false);

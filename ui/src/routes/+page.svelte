@@ -7,12 +7,23 @@
     import Background from "../components/auth/Background.svelte";
     import {onMount} from "svelte";
     import {toast} from "svelte-sonner";
+    import api from "$lib/axios.js";
 
-    onMount(() => {
-        const token = localStorage.getItem("token");
-        if (token) {
-            jwtToken.set(token);
-            toast("Rejoined existing session.")
+    onMount(async () => {
+        try {
+            const response = await api.get('auth/check-login');
+
+            const token = response.data.token;
+            if (token && token.trim() !== '') {
+                jwtToken.set(token);
+                toast.success("Login successful!");
+            } else {
+                toast.error("Invalid token received");
+            }
+        } catch (error) {
+            toast.error(`Login Error (${error.response?.status || 'Unknown'}): ${error.response?.data?.error || error.message}`);
+        } finally {
+            loading = false;
         }
     })
 </script>
