@@ -13,7 +13,11 @@
     import 'sockjs-client/lib/utils/browser-crypto.js';
 
     async function connectWebSocket() {
-        const socket = new SockJS('https://lumijiez.pw/ws');
+        const socket = new SockJS('https://lumijiez.pw/ws', null, {
+            withCredentials: true
+        });
+
+
         const stompClient = Stomp.over(socket);
 
         stompJsConnection.set(stompClient);
