@@ -8,8 +8,6 @@
     import { isLoggedIn } from "../../stores/connection";
     import connectWebSocket from "$lib/stomp";
 
-    export let authMode;
-
     let username = '';
     let email = '';
     let password = '';

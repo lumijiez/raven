@@ -8,8 +8,6 @@
     import { fade } from 'svelte/transition';
     import connectWebSocket from "$lib/stomp";
 
-    export let authMode;
-
     let usernameOrEmail = '';
     let password = '';
     let loading = false;

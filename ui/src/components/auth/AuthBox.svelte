@@ -1,6 +1,5 @@
 <script lang="ts">
     import { writable } from 'svelte/store';
-    import { slide } from 'svelte/transition';
     import LoginBox from './LoginBox.svelte';
     import RegisterBox from './RegisterBox.svelte';
 
@@ -54,9 +53,9 @@
             </div>
 
             {#if $authMode === 'login'}
-                <LoginBox {authMode} />
+                <LoginBox />
             {:else}
-                <RegisterBox {authMode} />
+                <RegisterBox />
             {/if}
 
             <div class="mt-6 text-center">
