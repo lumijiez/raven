@@ -34,52 +34,54 @@
     }
 </style>
 
-<div class="relative w-full max-w-md my-auto mx-auto bg-white shadow-2xl rounded-2xl overflow-hidden">
-    <div class="icon flex justify-center align-middle pt-6">
-        <h1 class="text-6xl">RAVEN</h1>
-    </div>
-    <div class={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${modes[$authMode].bgGradient}`}></div>
-
-    <div class="px-8 py-6">
-        <div class="flex items-center mb-8">
-            <div>
-                <h2 class="text-3xl font-bold text-gray-800">
-                    {modes[$authMode].title}
-                </h2>
-                <p class="text-gray-500">
-                    {modes[$authMode].subtitle}
-                </p>
-            </div>
+<div class="h-screen w-screen flex justify-center items-center">
+    <div class="ml-2 mr-2 bg-white w-full max-w-md h-fit shadow-2xl rounded-2xl overflow-hidden relative">
+        <div class="icon flex justify-center align-middle pt-6">
+            <h1 class="text-6xl">RAVEN</h1>
         </div>
+        <div class={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${modes[$authMode].bgGradient}`}></div>
 
-        {#if $authMode === 'login'}
-            <LoginBox {authMode} />
-        {:else}
-            <RegisterBox {authMode} />
-        {/if}
+        <div class="px-8 py-6">
+            <div class="flex items-center mb-8">
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-800">
+                        {modes[$authMode].title}
+                    </h2>
+                    <p class="text-gray-500">
+                        {modes[$authMode].subtitle}
+                    </p>
+                </div>
+            </div>
 
-        <div class="mt-6 text-center">
             {#if $authMode === 'login'}
-                <p class="text-gray-600">
-                    Don't have an account?
-                    <button
-                            on:click={() => $authMode = 'register'}
-                            class="text-blue-600 font-semibold hover:underline"
-                    >
-                        Sign Up
-                    </button>
-                </p>
+                <LoginBox {authMode} />
             {:else}
-                <p class="text-gray-600">
-                    Already have an account?
-                    <button
-                            on:click={() => $authMode = 'login'}
-                            class="text-green-600 font-semibold hover:underline"
-                    >
-                        Sign In
-                    </button>
-                </p>
+                <RegisterBox {authMode} />
             {/if}
+
+            <div class="mt-6 text-center">
+                {#if $authMode === 'login'}
+                    <p class="text-gray-600">
+                        Don't have an account?
+                        <button
+                                on:click={() => $authMode = 'register'}
+                                class="text-blue-600 font-semibold hover:underline"
+                        >
+                            Sign Up
+                        </button>
+                    </p>
+                {:else}
+                    <p class="text-gray-600">
+                        Already have an account?
+                        <button
+                                on:click={() => $authMode = 'login'}
+                                class="text-green-600 font-semibold hover:underline"
+                        >
+                            Sign In
+                        </button>
+                    </p>
+                {/if}
+            </div>
         </div>
     </div>
 </div>
