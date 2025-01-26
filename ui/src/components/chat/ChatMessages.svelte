@@ -58,7 +58,7 @@
 
 <div class="flex flex-col flex-1 h-screen bg-gray-50">
     {#if $selectedChatId}
-        <div class="min-h-18 shadow-sm bg-white z-10 p-3 flex items-center space-x-3">
+        <div in:fade class="min-h-18 shadow-sm bg-white z-10 p-3 flex items-center space-x-3">
             <div class={`bg-gradient-to-r ${randomColor} rounded-full w-10 h-10 flex items-center justify-center`}>
                 <MessageCircle class="text-white" size={20} />
             </div>
@@ -89,7 +89,7 @@
             {/each}
         </div>
 
-        <div class="p-4 border-t border-gray-200 bg-white">
+        <div class="p-2 border-t border-gray-200 bg-white z-10">
             <div class="flex items-center space-x-2">
                 <Button variant="ghost" size="icon" class="text-gray-500">
                     <Paperclip size={20} />
