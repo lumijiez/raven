@@ -58,6 +58,21 @@ public class AuthController {
         }
     }
 
+    @GetMapping("/logout")
+    public void logout(HttpServletRequest request, HttpServletResponse response) {
+        SecurityContextHolder.clearContext();
+
+        Cookie cookie = new Cookie("authToken", "");
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        cookie.setSecure(true);
+        cookie.setHttpOnly(true);
+        response.addCookie(cookie);
+
+        response.setStatus(HttpServletResponse.SC_OK);
+    }
+
+
     private void addHttpToken(HttpServletResponse response, String token) {
         Cookie cookie = new Cookie("authToken", token);
         cookie.setHttpOnly(true);
