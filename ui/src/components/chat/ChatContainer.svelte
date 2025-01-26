@@ -14,27 +14,23 @@
         chat.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    $: if ($selectedChatId) {
-        fetchMessages($selectedChatId);
-    }
-
-    async function fetchMessages(chatId) {
-        try {
-            const response = await api.post('api/message/get', {chatId});
-            messages.set(response.data.messageList);
-        } catch (error) {
-            messages.set([]);
-        }
+    async function selectChat(chatId) {
+        console.log(chatId);
+        selectedChatId.set(chatId);
     }
 
     onMount(async () => {
-        const response = await api.get('api/chat/get-all');
-        chatList.set(response.data.chats);
-    })
+        try {
+            const response = await api.get('api/chat/get-all');
+            chatList.set(response.data.chats);
+        } catch (error) {
+            console.error('Error fetching chats:', error);
+        }
+    });
 </script>
 
-<div class="flex h-screen">
-    <div class="bg-white flex-col flex-[0.3] border-r border-gray-200">
+<div class="flex h-screen w-screen">
+    <div class="bg-white flex-col flex-[0.25] border-r border-gray-200">
         <UserBar/>
 
         <div class="p-3 border-b border-gray-200">
@@ -57,11 +53,11 @@
                 <ChatListEntry
                         chatName={chat.name}
                         chatId={chat.id}
-                        onClick={() => selectedChatId.set(chat.id)}
+                        onSelect={() => selectChat(chat.id)}
                 />
             {/each}
         </div>
     </div>
 
-    <ChatMessages />
+    <ChatMessages/>
 </div>

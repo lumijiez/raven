@@ -3,10 +3,22 @@
     import { Input } from "$lib/shad/ui/input/index.js";
     import { Send, Paperclip, Smile } from 'lucide-svelte';
     import api from "$lib/axios.js";
-    import { username } from "../../stores/user.js";
+    import {id} from "../../stores/user.js";
+    import {selectedChatId, messages} from "../../stores/chats.js";
 
-    export let selectedChatId;
-    export let messages;
+    $: if ($selectedChatId) {
+        fetchMessages($selectedChatId);
+    }
+
+    async function fetchMessages(chatId) {
+        try {
+            const response = await api.post('api/message/get', { chatId });
+            messages.set(response.data.messageList);
+        } catch (error) {
+            messages.set([]);
+            console.error('Error fetching messages:', error);
+        }
+    }
 
     let newMessage = '';
 
@@ -15,16 +27,11 @@
 
         try {
             const response = await api.post('api/message/send', {
-                chatId: selectedChatId,
+                chatId: $selectedChatId,
                 content: newMessage
             });
 
-            messages.update(msgs => [...msgs, {
-                id: response.data.id,
-                content: newMessage,
-                timestamp: new Date().toISOString(),
-                sender: $username
-            }]);
+            messages.update(msgs => [...msgs, response.data]);
 
             newMessage = '';
         } catch (error) {
@@ -34,13 +41,13 @@
 </script>
 
 <div class="flex flex-col flex-1 h-screen bg-gray-50">
-    {#if selectedChatId}
+    {#if $selectedChatId}
         <div class="flex-grow overflow-y-auto p-4 space-y-3">
-            {#each messages as message}
-                <div class={`flex ${message.sender === $username ? 'justify-end' : 'justify-start'}`}>
+            {#each $messages as message}
+                <div class={`flex ${message.sender === $id ? 'justify-end' : 'justify-start'}`}>
                     <div class={`
                         max-w-[70%] p-3 rounded-2xl
-                        ${message.sender === $username
+                        ${message.sender === $id
                             ? 'bg-blue-500 text-white'
                             : 'bg-white text-gray-800 shadow-sm'
                         }
