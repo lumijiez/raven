@@ -5,7 +5,7 @@
     import { Input } from "$lib/shad/ui/input/index.js";
     import { Label } from "$lib/shad/ui/label/index.js";
     import { Button } from "$lib/shad/ui/button/index.js";
-    import { slide } from 'svelte/transition';
+    import { fade } from 'svelte/transition';
 
     export let authMode;
 
@@ -49,7 +49,7 @@
 <form
         on:submit|preventDefault={handleRegister}
         class="space-y-4"
-        in:slide={{ axis: 'x', duration: 500 }}
+        in:fade
 >
     <div class="space-y-2">
         <Label for="username" class="text-gray-700">Username</Label>
