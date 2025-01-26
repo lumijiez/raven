@@ -14,6 +14,12 @@ const config = {
 			}
 		},
 		extend: {
+			height: {
+				18: '4.5rem',
+			},
+			minHeight: {
+				18: '4.5rem',
+			},
 			colors: {
 				border: "hsl(var(--border) / <alpha-value>)",
 				input: "hsl(var(--input) / <alpha-value>)",

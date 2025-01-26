@@ -30,7 +30,7 @@
     }
 </script>
 
-<div class="relative bg-white shadow-md overflow-hidden h-20 flex items-center px-4">
+<div class="relative bg-white shadow-md overflow-hidden h-18 flex items-center px-4">
     <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-purple-600"></div>
     <div class="flex items-center justify-between w-full">
         <div class="flex items-center space-x-4">
