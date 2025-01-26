@@ -30,7 +30,11 @@
                 toast.success("Logged in successfully.");
             }
         } catch (error) {
-            toast.error(`Login Error (${error.response?.status || 'Unknown'}): ${error.response?.data?.error || error.message}`);
+            if (error.response?.status === 403) {
+                toast.error("Not logged in, please do so.")
+            } else {
+                toast.error(`Login Error (${error.response?.status || 'Unknown'}): ${error.response?.data?.error || error.message}`);
+            }
         } finally {
             loading = false;
         }
