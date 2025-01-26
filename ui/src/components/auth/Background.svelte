@@ -3,6 +3,7 @@
     import { fade } from 'svelte/transition';
     let canvas;
     let ctx;
+    let showCanvas = true;
 
     function createParticle(width, height) {
         const colors = [
@@ -90,7 +91,7 @@
     });
 </script>
 
-<canvas in:fade
+<canvas in:fade={{ duration: 1000 }}
         bind:this={canvas}
         class="fixed inset-0 w-full h-full pointer-events-none"
 ></canvas>
