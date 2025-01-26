@@ -6,7 +6,9 @@ export default defineConfig({
 	server: {
 		allowedHosts: ['ui'],
 		host: '0.0.0.0',
-
+		watch: {
+			usePolling: true,
+		},
 		port: 80
 	}
 });
