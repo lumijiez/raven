@@ -6,6 +6,7 @@
     import { Button } from "$lib/shad/ui/button/index.js";
     import { fade } from 'svelte/transition';
     import { isLoggedIn } from "../../stores/connection";
+    import connectWebSocket from "$lib/stomp";
 
     export let authMode;
 
@@ -35,6 +36,7 @@
 
             if (loginCheck.status === 200) {
                 isLoggedIn.set(true);
+                await connectWebSocket();
                 toast.success("Registered successfully.");
             }
         } catch (error) {

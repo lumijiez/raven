@@ -2,9 +2,10 @@
     import { id, username, email } from "../../stores/user.js";
     import { onMount } from "svelte";
     import api from "$lib/axios.js";
-    import {isLoggedIn} from "../../stores/connection.js";
+    import {isConnected, isLoggedIn} from "../../stores/connection.js";
     import {toast} from "svelte-sonner";
     import {LogOut, User} from "lucide-svelte";
+    import {stompJsConnection} from "../../stores/connection.js";
 
     onMount(async () => {
         const response = await api.get('api/user/self');
@@ -21,6 +22,8 @@
 
             if (response.status === 200) {
                 isLoggedIn.set(false);
+                $stompJsConnection.disconnect();
+                isConnected.set(false);
                 toast.success("Logged out successfully.");
             }
 

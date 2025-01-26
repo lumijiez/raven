@@ -6,6 +6,7 @@
     import { Label } from "$lib/shad/ui/label/index.js";
     import { Button } from "$lib/shad/ui/button/index.js";
     import { fade } from 'svelte/transition';
+    import connectWebSocket from "$lib/stomp";
 
     export let authMode;
 
@@ -27,6 +28,7 @@
 
             if (loginCheck.status === 200) {
                 isLoggedIn.set(true);
+                await connectWebSocket();
                 toast.success("Logged in successfully.");
             }
         } catch (error) {

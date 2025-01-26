@@ -7,35 +7,11 @@
     import {toast} from "svelte-sonner";
     import api from "$lib/axios.js";
     import ChatPage from "../components/chat/ChatPage.svelte";
-    import SockJS from 'sockjs-client';
-    import { Stomp } from '@stomp/stompjs';
+    import connectWebSocket from "$lib/stomp.js";
 
     import 'sockjs-client/lib/utils/browser-crypto.js';
 
-    async function connectWebSocket() {
-        const socket = new SockJS('https://lumijiez.pw/ws', null, {
-            withCredentials: true
-        });
 
-
-        const stompClient = Stomp.over(socket);
-
-        stompJsConnection.set(stompClient);
-        sockJsConnection.set(socket);
-
-        stompClient.connect(
-            {},
-            () => {
-                isConnected.set(true);
-                console.log('WebSocket Connected');
-            },
-            (error) => {
-                isConnected.set(false);
-                console.error('WebSocket Connection Error:', error.message);
-                toast.error(`WebSocket Connection Failed: ${error.message}`);
-            }
-        );
-    }
 
     onMount(async () => {
         try {
