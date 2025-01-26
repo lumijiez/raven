@@ -7,6 +7,8 @@ import io.github.lumijiez.auth.dto.request.LoginRequestDTO;
 import io.github.lumijiez.auth.dto.request.RegisterRequestDTO;
 import io.github.lumijiez.auth.dto.response.UserDetailsDTO;
 import io.github.lumijiez.auth.service.UserService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -24,8 +26,17 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponseDTO> login(@RequestBody LoginRequestDTO request) {
+    public ResponseEntity<AuthResponseDTO> login(@RequestBody LoginRequestDTO request, HttpServletResponse response) {
         log.info("Login request: {}", request);
+        AuthResponseDTO auth = userService.authenticateUser(request);
+
+        Cookie cookie = new Cookie("authToken", auth.getToken());
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(3600);
+        response.addCookie(cookie);
+
         return ResponseEntity.ok(userService.authenticateUser(request));
     }
 
