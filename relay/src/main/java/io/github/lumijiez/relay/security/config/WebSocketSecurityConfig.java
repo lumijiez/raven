@@ -16,6 +16,13 @@ import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import java.util.Objects;
+
 @Configuration
 @EnableWebSocketMessageBroker
 @Order(Ordered.HIGHEST_PRECEDENCE + 99)
@@ -37,7 +44,7 @@ public class WebSocketSecurityConfig implements WebSocketMessageBrokerConfigurer
                 );
 
                 if (accessor != null && StompCommand.CONNECT.equals(accessor.getCommand())) {
-                    String token = extractToken(accessor);
+                    String token = extractTokenFromCookie();
                     if (token != null) {
                         JwtClaims claims = jwtUtil.validateAndGetClaims(token);
                         if (claims.isSuccess()) {
@@ -52,10 +59,17 @@ public class WebSocketSecurityConfig implements WebSocketMessageBrokerConfigurer
                 return message;
             }
 
-            private String extractToken(StompHeaderAccessor accessor) {
-                String authorization = accessor.getFirstNativeHeader("Authorization");
-                if (authorization != null && authorization.startsWith("Bearer ")) {
-                    return authorization.substring(7);
+            private String extractTokenFromCookie() {
+                HttpServletRequest request =
+                        ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
+
+                Cookie[] cookies = request.getCookies();
+                if (cookies != null) {
+                    for (Cookie cookie : cookies) {
+                        if ("authToken".equals(cookie.getName())) {
+                            return cookie.getValue();
+                        }
+                    }
                 }
                 return null;
             }

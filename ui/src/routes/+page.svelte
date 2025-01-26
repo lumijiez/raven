@@ -1,14 +1,16 @@
 <script>
     import {isLoggedIn} from "../stores/connection.js";
     import { Toaster } from "$lib/shad/ui/sonner";
-    import UserBar from "../components/chat/UserBar.svelte";
-    import ChatContainer from "../components/chat/ChatContainer.svelte";
     import AuthBox from "../components/auth/AuthBox.svelte";
     import Background from "../components/auth/Background.svelte";
     import {onMount} from "svelte";
     import {toast} from "svelte-sonner";
     import api from "$lib/axios.js";
     import ChatPage from "../components/chat/ChatPage.svelte";
+
+    async function connectStomp() {
+
+    }
 
     onMount(async () => {
         try {
