@@ -1,10 +1,10 @@
 <script>
-    import { Button } from "$lib/shad/ui/button/index.js";
-    import { Input } from "$lib/shad/ui/input/index.js";
-    import { Send, Paperclip, Smile } from 'lucide-svelte';
+    import {Button} from "$lib/shad/ui/button/index.js";
+    import {Input} from "$lib/shad/ui/input/index.js";
+    import {Paperclip, Send, Smile} from 'lucide-svelte';
     import api from "$lib/axios.js";
     import {id} from "../../stores/user.js";
-    import {selectedChatId, messages} from "../../stores/chats.js";
+    import {messages, selectedChatId} from "../../stores/chats.js";
 
     $: if ($selectedChatId) {
         fetchMessages($selectedChatId);
@@ -13,7 +13,10 @@
     async function fetchMessages(chatId) {
         try {
             const response = await api.post('api/message/get', { chatId });
-            messages.set(response.data.messageList);
+            const sortedMessages = response.data.messageList.sort((a, b) =>
+                new Date(a.timestamp) - new Date(b.timestamp)
+            );
+            messages.set(sortedMessages);
         } catch (error) {
             messages.set([]);
             console.error('Error fetching messages:', error);
@@ -31,7 +34,10 @@
                 content: newMessage
             });
 
-            messages.update(msgs => [...msgs, response.data]);
+            messages.update(msgs => {
+                return [...msgs, response.data]
+                    .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+            });
 
             newMessage = '';
         } catch (error) {
