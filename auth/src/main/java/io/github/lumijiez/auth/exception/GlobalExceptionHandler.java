@@ -1,6 +1,7 @@
 package io.github.lumijiez.auth.exception;
 
 import io.github.lumijiez.auth.dto.response.ApiResponseDTO;
+import io.github.lumijiez.auth.dto.response.AuthResponseDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,6 +45,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(IncorrectCredentialsException.class)
     public ResponseEntity<ApiResponseDTO<Void>> handleIncorrectCredentialsException(IncorrectCredentialsException ex) {
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(ApiResponseDTO.error(ex.getMessage()));
+    }
+
+    @ExceptionHandler(AuthException.class)
+    public ResponseEntity<ApiResponseDTO<Void>> handleAuthException(AuthException ex) {
         return ResponseEntity
                 .status(HttpStatus.UNAUTHORIZED)
                 .body(ApiResponseDTO.error(ex.getMessage()));
