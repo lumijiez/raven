@@ -10,5 +10,6 @@ import java.util.UUID;
 
 @Repository
 public interface TwoFactorAuthRepository extends JpaRepository<TwoFactorAuth, UUID> {
-    Optional<TwoFactorAuth> findByUserAndCodeAndUsedFalse(User user, String code);
+    Optional<TwoFactorAuth> findByEmailAndCodeAndUsedFalseAndRegistrationTrue(String email, String code);
+    Optional<TwoFactorAuth> findByEmailAndCodeAndUsedFalseAndRegistrationFalse(String email, String code);
 }

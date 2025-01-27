@@ -1,9 +1,6 @@
 package io.github.lumijiez.auth.dto.response;
 
 import lombok.Data;
-
-package io.github.lumijiez.auth.dto.response;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
