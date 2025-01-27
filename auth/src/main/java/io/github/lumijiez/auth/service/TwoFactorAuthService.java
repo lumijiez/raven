@@ -4,14 +4,19 @@ import io.github.lumijiez.auth.domain.entity.TwoFactorAuth;
 import io.github.lumijiez.auth.domain.entity.User;
 import io.github.lumijiez.auth.dto.request.RegisterRequestDTO;
 import io.github.lumijiez.auth.repository.TwoFactorAuthRepository;
+import jakarta.security.auth.message.AuthException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
+@Transactional
+@Slf4j
 public class TwoFactorAuthService {
     private final TwoFactorAuthRepository twoFactorAuthRepository;
     private final EmailService emailService;
@@ -25,8 +30,11 @@ public class TwoFactorAuthService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public void generateAndSendRegistrationCode(RegisterRequestDTO request) {
+    public void generateAndSendRegistrationCode(RegisterRequestDTO request) throws AuthException {
         String code = generateCode();
+
+        twoFactorAuthRepository.invalidateExistingRegistrationCodes(request.getEmail());
+
         TwoFactorAuth twoFactorAuth = TwoFactorAuth.builder()
                 .email(request.getEmail())
                 .username(request.getUsername())
@@ -41,7 +49,7 @@ public class TwoFactorAuthService {
         emailService.sendRegistrationCode(request.getEmail(), code);
     }
 
-    public void generateAndSendLoginCode(User user) {
+    public void generateAndSendLoginCode(User user) throws AuthException {
         String code = generateCode();
         TwoFactorAuth twoFactorAuth = TwoFactorAuth.builder()
                 .email(user.getEmail())
@@ -67,6 +75,10 @@ public class TwoFactorAuthService {
 
     private String generateCode() {
         SecureRandom random = new SecureRandom();
-        return String.format("%06d", random.nextInt(1000000));
+        StringBuilder code = new StringBuilder();
+        for (int i = 0; i < 6; i++) {
+            code.append(random.nextInt(10));
+        }
+        return code.toString();
     }
 }

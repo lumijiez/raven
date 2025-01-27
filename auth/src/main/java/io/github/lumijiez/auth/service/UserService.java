@@ -13,22 +13,32 @@ import io.github.lumijiez.auth.dto.request.LoginRequestDTO;
 import io.github.lumijiez.auth.dto.request.RegisterRequestDTO;
 import io.github.lumijiez.auth.dto.response.AuthResponseDTO;
 import io.github.lumijiez.auth.security.JwtHelper;
-import org.modelmapper.ModelMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
+@Transactional
+@Slf4j
 public class UserService {
     private final UserRepository userRepository;
     private final TwoFactorAuthService twoFactorService;
     private final JwtHelper jwtHelper;
-    private final ModelMapper modelMapper;
     private final BCryptPasswordEncoder passwordEncoder;
 
-    @Transactional
-    public AuthResponseDTO initiateRegistration(RegisterRequestDTO request) {
+    public UserService(UserRepository userRepository,
+                       TwoFactorAuthService twoFactorService,
+                       JwtHelper jwtHelper,
+                       BCryptPasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.twoFactorService = twoFactorService;
+        this.jwtHelper = jwtHelper;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    public AuthResponseDTO initiateRegistration(RegisterRequestDTO request) throws jakarta.security.auth.message.AuthException {
         if (userRepository.existsByUsername(request.getUsername())) {
             throw new UserAlreadyExistsException("username", request.getUsername());
         }
@@ -40,10 +50,9 @@ public class UserService {
         return AuthResponseDTO.requiresTwoFactor(request.getEmail());
     }
 
-    @Transactional
     public AuthResponseDTO completeRegistration(String email, String code) {
         TwoFactorAuth tfa = twoFactorService.validateRegistrationCode(email, code)
-                .orElseThrow(() -> new AuthException("Not found!"));
+                .orElseThrow(() -> new AuthException("Invalid or expired registration code"));
 
         User user = User.builder()
                 .username(tfa.getUsername())
@@ -57,8 +66,7 @@ public class UserService {
         return AuthResponseDTO.from(jwtHelper.generateTokenForUser(user));
     }
 
-    @Transactional
-    public AuthResponseDTO initiateLogin(LoginRequestDTO request) {
+    public AuthResponseDTO initiateLogin(LoginRequestDTO request) throws jakarta.security.auth.message.AuthException {
         User user = userRepository
                 .findByUsernameOrEmail(request.getUsernameOrEmail(), request.getUsernameOrEmail())
                 .orElseThrow(() -> new UserNotFoundException(request.getUsernameOrEmail()));
@@ -71,13 +79,12 @@ public class UserService {
         return AuthResponseDTO.requiresTwoFactor(user.getEmail());
     }
 
-    @Transactional
     public AuthResponseDTO completeLogin(String email, String code) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException(email));
 
         TwoFactorAuth tfa = twoFactorService.validateLoginCode(email, code)
-                .orElseThrow(() -> new InvalidTwoFactorCodeException());
+                .orElseThrow(() -> new AuthException("Invalid or expired login code"));
 
         tfa.setUsed(true);
         return AuthResponseDTO.from(jwtHelper.generateTokenForUser(user));

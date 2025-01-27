@@ -23,15 +23,3 @@ CREATE TABLE two_factor_auth (
 
 CREATE INDEX idx_tfa_email_code ON two_factor_auth(email, code);
 CREATE INDEX idx_tfa_email_registration ON two_factor_auth(email, registration) WHERE used = FALSE;
-
-CREATE OR REPLACE FUNCTION cleanup_expired_codes()
-RETURNS void AS $$
-BEGIN
-DELETE FROM two_factor_auth
-WHERE expiry_time < CURRENT_TIMESTAMP
-   OR used = TRUE;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE EXTENSION IF NOT EXISTS pg_cron;
-SELECT cron.schedule('0 * * * *', 'SELECT cleanup_expired_codes()');
