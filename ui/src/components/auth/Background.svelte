@@ -29,7 +29,6 @@
 
     let particles = [];
 
-
     function animateParticles() {
         if (!canvas || !ctx) return;
 

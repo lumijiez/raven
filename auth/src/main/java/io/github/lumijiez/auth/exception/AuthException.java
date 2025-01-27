@@ -1,7 +1,7 @@
 package io.github.lumijiez.auth.exception;
 
-public class AuthException extends RuntimeException {
-    public AuthException(String message) {
+public abstract class AuthException extends RuntimeException {
+    protected AuthException(String message) {
         super(message);
     }
 }
