@@ -157,7 +157,8 @@ public class TwoFactorAuthService {
                 + "</div>"
                 + "</div>"
                 + "</body>"
-                + "</html>";
+                + "</html>"
+                ;
 
         sendEmail(recipientEmail, subject, content);
     }
