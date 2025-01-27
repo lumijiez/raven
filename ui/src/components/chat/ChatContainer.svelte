@@ -8,6 +8,10 @@
     import { Search } from 'lucide-svelte';
     import { Input } from "$lib/shad/ui/input/index.js";
     import ConnectionStatus from "./ConnectionStatus.svelte";
+    import {get} from "svelte/store";
+    import {stompJsConnection} from "../../stores/connection.js";
+    import {addMessage} from "../../stores/chats.js";
+    import {toast} from "svelte-sonner";
 
     let searchQuery = '';
 
@@ -20,10 +24,44 @@
         selectedChatId.set(chatId);
     }
 
+    async function subscribeChat(chatId) {
+        try {
+            get(stompJsConnection).subscribe(`/topic/chats/${chatId}`, message => {
+                try {
+                    const data = JSON.parse(message.body);
+                    console.group(`%cMessage Received - Chat ${chatId}`, 'color: blue; font-weight: bold');
+                    console.log('Raw Message:', message);
+                    console.log('Parsed Data:', data);
+                    console.log('Topic:', `/topic/chats/${chatId}`);
+                    console.groupEnd();
+                    addMessage(chatId, message);
+
+                } catch (error) {
+                    toast('Message Processing Error', {
+                        message: error.message,
+                        chatId: chatId,
+                        messageBody: message.body,
+                        stack: error.stack
+                    });
+                }
+            });
+        } catch (error) {
+            toast('Chat Subscription Error', {
+                message: error.message,
+                chatId: chatId,
+                stack: error.stack
+            });
+        }
+    }
+
     onMount(async () => {
         try {
             const response = await api.get('api/chat/get-all');
             chatList.set(response.data.chats);
+
+            $chatList.forEach(chat => {
+                subscribeChat(chat);
+            })
         } catch (error) {
             console.error('Error fetching chats:', error);
         }

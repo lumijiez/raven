@@ -5,6 +5,8 @@
     import api from "$lib/axios.js";
     import { id } from "../../stores/user.js";
     import { messages, selectedChatId } from "../../stores/chats.js";
+    import {stompJsConnection} from "../../stores/connection.js";
+    import {toast} from "svelte-sonner";
 
     const iconColors = [
         'from-blue-500 to-purple-600',
@@ -45,22 +47,21 @@
         if (!newMessage.trim() || !$selectedChatId) return;
 
         try {
-            const response = await api.post('api/message/send', {
+            if (!newMessage) {
+                toast.error('Message content cannot be empty');
+            }
+
+            $stompJsConnection.send("/app/chat.send", {}, JSON.stringify({
                 chatId: $selectedChatId,
                 content: newMessage
-            });
-
-            messages.update(current => ({
-                ...current,
-                [$selectedChatId]: [
-                    ...(current[$selectedChatId] || []),
-                    response.data
-                ].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
             }));
-
-            newMessage = '';
+            newMessage.value = '';
         } catch (error) {
-            console.error('Message send failed', error);
+            toast.error('Send Message Error', {
+                message: error.message,
+                chatId: chatId,
+                stack: error.stack
+            });
         }
     }
 </script>
