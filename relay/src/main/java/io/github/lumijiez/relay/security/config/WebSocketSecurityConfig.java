@@ -103,7 +103,34 @@ public class WebSocketSecurityConfig implements WebSocketMessageBrokerConfigurer
 
                 if (sessionAttributes != null) {
                     log.error(sessionAttributes.toString());
-                    return ((String) sessionAttributes.get("cookie")).split("=")[1];
+
+                    String token = (String) sessionAttributes.get("cookie");
+                    if (token != null && !token.isEmpty()) {
+                        String extractedToken = token.split("=")[1];
+                        JwtClaims claims = jwtUtil.validateAndGetClaims(extractedToken);
+
+                        if (claims.isSuccess()) {
+                            return extractedToken;
+                        }
+                    }
+                }
+
+                String cookieValue = (String) sessionAttributes.get("cookie");
+                if (cookieValue != null && !cookieValue.isEmpty()) {
+                    String[] cookieParts = cookieValue.split(";");
+                    for (String part : cookieParts) {
+                        if (part.contains("authToken")) {
+                            String[] tokenPair = part.split("=");
+                            if (tokenPair.length > 1) {
+                                String fallbackToken = tokenPair[1].trim();
+                                JwtClaims fallbackClaims = jwtUtil.validateAndGetClaims(fallbackToken);
+
+                                if (fallbackClaims.isSuccess()) {
+                                    return fallbackToken;
+                                }
+                            }
+                        }
+                    }
                 }
 
                 return null;
