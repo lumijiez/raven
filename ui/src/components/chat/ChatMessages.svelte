@@ -23,6 +23,10 @@
         fetchMessages($selectedChatId);
     }
 
+    async function getName(userId) {
+
+    }
+
     async function fetchMessages(chatId) {
         try {
             const response = await api.post('api/message/get', {chatId});
