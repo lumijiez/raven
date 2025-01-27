@@ -2,7 +2,6 @@ import SockJS from "sockjs-client";
 import {Stomp} from "@stomp/stompjs";
 import {isConnected, sockJsConnection, stompJsConnection} from "../stores/connection.js";
 import {toast} from "svelte-sonner";
-import { get } from 'svelte/store';
 
 async function connectWebSocket() {
     const socket = new SockJS('https://lumijiez.pw/ws', null, {
