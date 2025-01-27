@@ -1,10 +1,10 @@
 <script>
-    import {Button} from "$lib/shad/ui/button/index.js";
-    import {Input} from "$lib/shad/ui/input/index.js";
-    import {Paperclip, Send, Smile, MoreVertical, MessageCircle} from 'lucide-svelte';
+    import { Button } from "$lib/shad/ui/button/index.js";
+    import { Input } from "$lib/shad/ui/input/index.js";
+    import { Paperclip, Send, Smile, MoreVertical, MessageCircle } from 'lucide-svelte';
     import api from "$lib/axios.js";
-    import {id} from "../../stores/user.js";
-    import {messages, selectedChatId} from "../../stores/chats.js";
+    import { id } from "../../stores/user.js";
+    import { messages, selectedChatId } from "../../stores/chats.js";
 
     const iconColors = [
         'from-blue-500 to-purple-600',
@@ -22,13 +22,19 @@
 
     async function fetchMessages(chatId) {
         try {
-            const response = await api.post('api/message/get', { chatId });
+            const response = await api.post('api/message/get', {chatId});
             const sortedMessages = response.data.messageList.sort((a, b) =>
                 new Date(a.timestamp) - new Date(b.timestamp)
             );
-            messages.set(sortedMessages);
+            messages.update(current => ({
+                ...current,
+                [chatId]: sortedMessages
+            }));
         } catch (error) {
-            messages.set([]);
+            messages.update(current => ({
+                ...current,
+                [chatId]: []
+            }));
             console.error('Error fetching messages:', error);
         }
     }
@@ -44,10 +50,13 @@
                 content: newMessage
             });
 
-            messages.update(msgs => {
-                return [...msgs, response.data]
-                    .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
-            });
+            messages.update(current => ({
+                ...current,
+                [$selectedChatId]: [
+                    ...(current[$selectedChatId] || []),
+                    response.data
+                ].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
+            }));
 
             newMessage = '';
         } catch (error) {
@@ -60,29 +69,27 @@
     {#if $selectedChatId}
         <div class="min-h-18 shadow-sm bg-white z-10 p-3 flex items-center space-x-3">
             <div class={`bg-gradient-to-r ${randomColor} rounded-full w-10 h-10 flex items-center justify-center`}>
-                <MessageCircle class="text-white" size={20} />
+                <MessageCircle class="text-white" size={20}/>
             </div>
             <div class="flex-grow">
                 <p class="text-gray-800 font-semibold">{$selectedChatId}</p>
             </div>
             <Button variant="ghost" size="icon" class="text-gray-500">
-                <MoreVertical size={20} />
+                <MoreVertical size={20}/>
             </Button>
         </div>
 
         <div class="flex-grow overflow-y-auto p-4 space-y-3">
-            {#each $messages as message}
+            {#each $messages[$selectedChatId] || [] as message}
                 <div class={`flex ${message.sender === $id ? 'justify-end' : 'justify-start'}`}>
-                    <div class={`
-                        max-w-[70%] p-3 rounded-2xl
+                    <div class={`max-w-[70%] p-3 rounded-2xl
                         ${message.sender === $id
                             ? 'bg-blue-500 text-white'
                             : 'bg-white text-gray-800 shadow-sm'
-                        }
-                    `}>
+                        }`}>
                         <p>{message.content}</p>
                         <p class="text-xs mt-1 opacity-70">
-                            {new Date(message.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                            {new Date(message.timestamp).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}
                         </p>
                     </div>
                 </div>
@@ -92,10 +99,10 @@
         <div class="p-2 border-t border-gray-200 bg-white z-10">
             <div class="flex items-center space-x-2">
                 <Button variant="ghost" size="icon" class="text-gray-500">
-                    <Paperclip size={20} />
+                    <Paperclip size={20}/>
                 </Button>
                 <Button variant="ghost" size="icon" class="text-gray-500">
-                    <Smile size={20} />
+                    <Smile size={20}/>
                 </Button>
                 <div class="flex-grow">
                     <Input
@@ -111,7 +118,7 @@
                         on:click={sendMessage}
                         disabled={!newMessage.trim()}
                 >
-                    <Send size={20} />
+                    <Send size={20}/>
                 </Button>
             </div>
         </div>
