@@ -5,6 +5,7 @@ import io.github.lumijiez.auth.dto.response.AuthResponseDTO;
 import io.github.lumijiez.auth.dto.response.UserDetailsDTO;
 import io.github.lumijiez.auth.service.TwoFactorAuthService;
 import io.github.lumijiez.auth.service.UserService;
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -27,7 +28,7 @@ public class AuthController {
     }
 
     @PostMapping("/register/initiate")
-    public ResponseEntity<String> registerInitiate(@RequestBody RegisterInitiateDTO request) {
+    public ResponseEntity<String> registerInitiate(@RequestBody RegisterInitiateDTO request) throws MessagingException {
         twoFactorAuthService.registerInitiate(request);
         return ResponseEntity.ok("Verification email sent.");
     }
@@ -40,7 +41,7 @@ public class AuthController {
     }
 
     @PostMapping("/login/initiate")
-    public ResponseEntity<String> loginInitiate(@RequestBody LoginInitiateDTO request) {
+    public ResponseEntity<String> loginInitiate(@RequestBody LoginInitiateDTO request) throws MessagingException {
         twoFactorAuthService.loginInitiate(request);
         return ResponseEntity.ok("If the credentials are correct, a verification code has been sent.");
     }

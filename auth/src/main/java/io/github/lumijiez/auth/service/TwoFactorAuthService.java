@@ -16,6 +16,7 @@ import io.github.lumijiez.auth.repository.TempLoginRepository;
 import io.github.lumijiez.auth.repository.TempUserRepository;
 import io.github.lumijiez.auth.repository.UserRepository;
 import io.github.lumijiez.auth.security.JwtHelper;
+import jakarta.mail.MessagingException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -49,12 +50,12 @@ public class TwoFactorAuthService {
         this.mailSender = mailSender;
     }
 
-    public void registerInitiate(RegisterInitiateDTO request) {
+    public void registerInitiate(RegisterInitiateDTO request) throws MessagingException {
         if (userRepository.existsByUsername(request.getUsername()))
-            throw new UserAlreadyExistsException("Username", "already taken");
+            throw new UserAlreadyExistsException("Username", request.getUsername());
 
         if (userRepository.existsByEmail(request.getEmail()))
-            throw new UserAlreadyExistsException("Email", "already taken");
+            throw new UserAlreadyExistsException("Email", request.getEmail());
 
         String verificationCode = generateVerificationCode();
 
@@ -67,7 +68,7 @@ public class TwoFactorAuthService {
                 .build();
 
         tempUserRepository.save(tempUser);
-        sendEmail(request.getEmail(), "Verify your account", "Your verification code is: " + verificationCode);
+        sendVerificationEmail(request.getEmail(), verificationCode);
     }
 
     public AuthResponseDTO registerComplete(RegisterCompleteDTO request) {
@@ -77,16 +78,16 @@ public class TwoFactorAuthService {
         User user = User.builder()
                 .username(tempUser.getUsername())
                 .email(tempUser.getEmail())
-                .password(tempUser.getPassword())  // Already encrypted
+                .password(tempUser.getPassword())
                 .build();
 
         userRepository.save(user);
-        tempUserRepository.delete(tempUser);  // Cleanup temp data
+        tempUserRepository.delete(tempUser);
 
         return AuthResponseDTO.from(jwtHelper.generateTokenForUser(user));
     }
 
-    public void loginInitiate(LoginInitiateDTO request) {
+    public void loginInitiate(LoginInitiateDTO request) throws MessagingException {
         User user = userRepository.findByUsernameOrEmail(request.getEmail(), request.getEmail())
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
@@ -102,7 +103,7 @@ public class TwoFactorAuthService {
                 .build();
 
         tempLoginRepository.save(tempLogin);
-        sendEmail(user.getEmail(), "Login Verification Code", "Your login code is: " + verificationCode);
+        sendLoginVerificationEmail(user.getEmail(), verificationCode);
     }
 
     public AuthResponseDTO loginComplete(LoginCompleteDTO request) {
@@ -119,6 +120,44 @@ public class TwoFactorAuthService {
 
     private String generateVerificationCode() {
         return String.valueOf(new Random().nextInt(900000) + 100000);
+    }
+
+    public void sendVerificationEmail(String recipientEmail, String verificationCode) throws MessagingException {
+        String subject = "Verify Your Account";
+        String content = "<html>"
+                + "<body style='font-family: Arial, sans-serif; color: #333;'>"
+                + "<h2 style='color: #5c6bc0;'>Account Verification</h2>"
+                + "<p>Dear user,</p>"
+                + "<p>We received a request to verify your account. Please use the following verification code:</p>"
+                + "<h3 style='background-color: #5c6bc0; color: white; padding: 10px;'>"
+                + verificationCode
+                + "</h3>"
+                + "<p>If you did not request this, please ignore this email.</p>"
+                + "<p>Thank you for choosing us!</p>"
+                + "<br><p>Best regards, <br> Your Company Team</p>"
+                + "</body>"
+                + "</html>";
+
+        sendEmail(recipientEmail, subject, content);
+    }
+
+    public void sendLoginVerificationEmail(String recipientEmail, String verificationCode) throws MessagingException {
+        String subject = "Login Verification Code";
+        String content = "<html>"
+                + "<body style='font-family: Arial, sans-serif; color: #333;'>"
+                + "<h2 style='color: #ff7043;'>Login Verification</h2>"
+                + "<p>Dear user,</p>"
+                + "<p>We received a login request for your account. Use the following verification code to complete the login:</p>"
+                + "<h3 style='background-color: #ff7043; color: white; padding: 10px;'>"
+                + verificationCode
+                + "</h3>"
+                + "<p>If you did not attempt to log in, please ignore this email.</p>"
+                + "<p>Thank you for your attention!</p>"
+                + "<br><p>Best regards, <br> Your Company Team</p>"
+                + "</body>"
+                + "</html>";
+
+        sendEmail(recipientEmail, subject, content);
     }
 
     private void sendEmail(String to, String subject, String text) {
