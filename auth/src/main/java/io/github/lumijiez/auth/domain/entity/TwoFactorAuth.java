@@ -1,9 +1,6 @@
 package io.github.lumijiez.auth.domain.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,24 +14,29 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "users")
-public class User {
+@Table(name = "two_factor_auth")
+public class TwoFactorAuth {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false, unique = true)
-    private String username;
-
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String email;
 
-    @Column(nullable = false)
-    @NotBlank
-    @Size(min = 8, max = 255)
-    @Pattern(regexp = "(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*(),.?\":{}|<>]).{8,}",
-            message = "Password must include a lowercase, uppercase, digit, and special character")
+    private String username;
     private String password;
+
+    @Column(nullable = false, length = 6)
+    private String code;
+
+    @Column(nullable = false)
+    private LocalDateTime expiryTime;
+
+    @Column(nullable = false)
+    private boolean used;
+
+    @Column(nullable = false)
+    private boolean registration;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;

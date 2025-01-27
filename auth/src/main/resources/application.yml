@@ -2,6 +2,18 @@ spring:
   application:
     name: auth
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: danthevip@gmail.com
+    password: hxka jxff gobm nhmb
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
   datasource:
     url: jdbc:postgresql://postgres:5432/raven
     username: raven
