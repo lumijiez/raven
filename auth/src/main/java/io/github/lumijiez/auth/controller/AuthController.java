@@ -27,20 +27,38 @@ public class AuthController {
         this.userService = userService;
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequestDTO request, HttpServletResponse response) {
-        log.info("Login request: {}", request);
-        AuthResponseDTO auth = userService.authenticateUser(request);
-        addHttpToken(response, auth.getToken());
-        return ResponseEntity.ok("OK!");
+    @PostMapping("/register/initiate")
+    public ResponseEntity<AuthResponseDTO> initiateRegistration(@Valid @RequestBody RegisterRequestDTO request) {
+        log.info("Registration initiation request for email: {}", request.getEmail());
+        return ResponseEntity.ok(userService.initiateRegistration(request));
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<String> register(@Valid @RequestBody RegisterRequestDTO request, HttpServletResponse response) {
-        log.info("Register request: {}", request);
-        AuthResponseDTO auth = userService.registerUser(request);
+    @PostMapping("/register/complete")
+    public ResponseEntity<AuthResponseDTO> completeRegistration(
+            @RequestParam String email,
+            @RequestParam String code,
+            HttpServletResponse response) {
+        log.info("Registration completion request for email: {}", email);
+        AuthResponseDTO auth = userService.completeRegistration(email, code);
         addHttpToken(response, auth.getToken());
-        return ResponseEntity.ok("OK!");
+        return ResponseEntity.ok(auth);
+    }
+
+    @PostMapping("/login/initiate")
+    public ResponseEntity<AuthResponseDTO> initiateLogin(@Valid @RequestBody LoginRequestDTO request) {
+        log.info("Login initiation request for: {}", request.getUsernameOrEmail());
+        return ResponseEntity.ok(userService.initiateLogin(request));
+    }
+
+    @PostMapping("/login/complete")
+    public ResponseEntity<AuthResponseDTO> completeLogin(
+            @RequestParam String email,
+            @RequestParam String code,
+            HttpServletResponse response) {
+        log.info("Login completion request for email: {}", email);
+        AuthResponseDTO auth = userService.completeLogin(email, code);
+        addHttpToken(response, auth.getToken());
+        return ResponseEntity.ok(auth);
     }
 
 

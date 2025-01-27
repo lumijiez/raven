@@ -16,16 +16,33 @@ import java.util.UUID;
 @AllArgsConstructor
 @Table(name = "two_factor_auth")
 public class TwoFactorAuth {
-
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @OneToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @Column(nullable = false)
+    private String email;
 
+    private String username;
+    private String password;
+
+    @Column(nullable = false, length = 6)
     private String code;
+
+    @Column(nullable = false)
     private LocalDateTime expiryTime;
+
+    @Column(nullable = false)
     private boolean used;
+
+    @Column(nullable = false)
+    private boolean registration;
+
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
 }
