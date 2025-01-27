@@ -23,7 +23,7 @@
         fetchMessages($selectedChatId);
     }
 
-    async function getName(userId) {
+    async function getUserName(userId) {
 
     }
 
@@ -61,6 +61,16 @@
         }));
         newMessage.value = '';
     }
+
+    function getChatName() {
+        const chat = $chatList.find(c => c.id === $selectedChatId);
+        return chat ? chat.name : null;
+    }
+
+    function getUserCount() {
+        const chat = $chatList.find(c => c.id === $selectedChatId);
+        return chat ? chat.members.length : 0;
+    }
 </script>
 
 <div class="flex flex-col flex-1 h-screen bg-gray-50">
@@ -70,7 +80,8 @@
                 <MessageCircle class="text-white" size={20}/>
             </div>
             <div class="flex-grow">
-                <p class="text-gray-800 font-semibold">{$chatList.get($selectedChatId).id}</p>
+                <p class="text-gray-800 font-semibold">{getChatName()}</p>
+                <p class="text-gray-800 text-sm">{getUserCount()} participants</p>
             </div>
             <Button variant="ghost" size="icon" class="text-gray-500">
                 <MoreVertical size={20}/>

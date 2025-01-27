@@ -15,7 +15,6 @@ public class KafkaProducer {
     }
 
     public void sendToClient(KafkaMessageResponse message) {
-        message.setContent("aaa PROCESSED");
         kafkaTemplate.send("chat.responses", message);
         log.info("KafkaMessage sent to client : {}", message);
     }

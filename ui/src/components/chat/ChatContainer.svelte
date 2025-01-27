@@ -63,6 +63,7 @@
     onMount(async () => {
         try {
             const response = await api.get('api/chat/get-all');
+            console.log(response.data.chats);
             chatList.set(response.data.chats);
         } catch (error) {
             console.error('Error fetching chats:', error);
