@@ -46,23 +46,15 @@
     async function sendMessage() {
         if (!newMessage.trim() || !$selectedChatId) return;
 
-        try {
-            if (!newMessage) {
-                toast.error('Message content cannot be empty');
-            }
-
-            $stompJsConnection.send("/app/chat.send", {}, JSON.stringify({
-                chatId: $selectedChatId,
-                content: newMessage
-            }));
-            newMessage.value = '';
-        } catch (error) {
-            toast.error('Send Message Error', {
-                message: error.message,
-                chatId: chatId,
-                stack: error.stack
-            });
+        if (!newMessage) {
+            toast.error('Message content cannot be empty');
         }
+
+        $stompJsConnection.send("/app/chat.send", {}, JSON.stringify({
+            chatId: $selectedChatId,
+            content: newMessage
+        }));
+        newMessage.value = '';
     }
 </script>
 

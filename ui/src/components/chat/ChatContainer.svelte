@@ -54,14 +54,16 @@
         }
     }
 
+    $: if ($chatList) {
+        $chatList.forEach(chat => {
+            subscribeChat(chat.id);
+        })
+    }
+
     onMount(async () => {
         try {
             const response = await api.get('api/chat/get-all');
             chatList.set(response.data.chats);
-
-            $chatList.forEach(chat => {
-                subscribeChat(chat);
-            })
         } catch (error) {
             console.error('Error fetching chats:', error);
         }
