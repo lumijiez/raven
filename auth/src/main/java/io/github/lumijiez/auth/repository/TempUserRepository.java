@@ -10,6 +10,7 @@ import java.util.UUID;
 
 @Repository
 public interface TempUserRepository extends JpaRepository<TempUser, UUID> {
-    Optional<TempUser> findByVerificationCode(String code);
+    Optional<TempUser> findByEmailAndVerificationCode(String email, String verificationCode);
     void deleteByCreatedAtBefore(LocalDateTime cutoff);
 }
+

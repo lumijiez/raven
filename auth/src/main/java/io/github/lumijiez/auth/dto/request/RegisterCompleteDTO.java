@@ -6,5 +6,6 @@ import lombok.Data;
 @Data
 @Builder
 public class RegisterCompleteDTO {
+    private String email;
     private String verificationCode;
 }

@@ -71,16 +71,17 @@ public class TwoFactorAuthService {
     }
 
     public AuthResponseDTO registerComplete(RegisterCompleteDTO request) {
-        TempUser tempUser = tempUserRepository.findByVerificationCode(request.getVerificationCode())
-                .orElseThrow(() -> new AuthException("Code not correct."));
+        TempUser tempUser = tempUserRepository.findByEmailAndVerificationCode(request.getEmail(), request.getVerificationCode())
+                .orElseThrow(() -> new AuthException("Core incorrect"));
 
-        User user = new User();
-        user.setUsername(tempUser.getUsername());
-        user.setEmail(tempUser.getEmail());
-        user.setPassword(tempUser.getPassword());
+        User user = User.builder()
+                .username(tempUser.getUsername())
+                .email(tempUser.getEmail())
+                .password(tempUser.getPassword())  // Already encrypted
+                .build();
 
         userRepository.save(user);
-        tempUserRepository.delete(tempUser);
+        tempUserRepository.delete(tempUser);  // Cleanup temp data
 
         return AuthResponseDTO.from(jwtHelper.generateTokenForUser(user));
     }
