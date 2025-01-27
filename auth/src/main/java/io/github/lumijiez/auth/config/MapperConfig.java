@@ -1,7 +1,6 @@
 package io.github.lumijiez.auth.config;
 
 import io.github.lumijiez.auth.domain.entity.User;
-import io.github.lumijiez.auth.dto.request.RegisterRequestDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

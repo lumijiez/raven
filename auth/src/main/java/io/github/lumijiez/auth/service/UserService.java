@@ -7,8 +7,6 @@ import io.github.lumijiez.auth.exception.IncorrectCredentialsException;
 import io.github.lumijiez.auth.exception.UserAlreadyExistsException;
 import io.github.lumijiez.auth.exception.UserNotFoundException;
 import io.github.lumijiez.auth.repository.UserRepository;
-import io.github.lumijiez.auth.dto.request.LoginRequestDTO;
-import io.github.lumijiez.auth.dto.request.RegisterRequestDTO;
 import io.github.lumijiez.auth.dto.response.AuthResponseDTO;
 import io.github.lumijiez.auth.security.JwtHelper;
 import org.modelmapper.ModelMapper;

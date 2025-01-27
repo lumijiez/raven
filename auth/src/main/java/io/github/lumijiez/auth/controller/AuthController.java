@@ -1,13 +1,10 @@
 package io.github.lumijiez.auth.controller;
 
-import io.github.lumijiez.auth.domain.entity.User;
-import io.github.lumijiez.auth.dto.request.FindUserRequestDTO;
+import io.github.lumijiez.auth.dto.request.*;
 import io.github.lumijiez.auth.dto.response.AuthResponseDTO;
-import io.github.lumijiez.auth.dto.request.LoginRequestDTO;
-import io.github.lumijiez.auth.dto.request.RegisterRequestDTO;
 import io.github.lumijiez.auth.dto.response.UserDetailsDTO;
+import io.github.lumijiez.auth.service.TwoFactorAuthService;
 import io.github.lumijiez.auth.service.UserService;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -22,23 +19,35 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final UserService userService;
+    private final TwoFactorAuthService twoFactorAuthService;
 
-    public AuthController(UserService userService) {
+    public AuthController(UserService userService, TwoFactorAuthService twoFactorAuthService) {
         this.userService = userService;
+        this.twoFactorAuthService = twoFactorAuthService;
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequestDTO request, HttpServletResponse response) {
-        log.info("Login request: {}", request);
-        AuthResponseDTO auth = userService.authenticateUser(request);
+    @PostMapping("/register/initiate")
+    public ResponseEntity<String> registerInitiate(@RequestBody RegisterInitiateDTO request) {
+        twoFactorAuthService.registerInitiate(request);
+        return ResponseEntity.ok("Verification email sent.");
+    }
+
+    @PostMapping("/register/complete")
+    public ResponseEntity<String> registerComplete(@RequestBody RegisterCompleteDTO request, HttpServletResponse response) {
+        AuthResponseDTO auth = twoFactorAuthService.registerComplete(request);
         addHttpToken(response, auth.getToken());
         return ResponseEntity.ok("OK!");
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<String> register(@Valid @RequestBody RegisterRequestDTO request, HttpServletResponse response) {
-        log.info("Register request: {}", request);
-        AuthResponseDTO auth = userService.registerUser(request);
+    @PostMapping("/login/initiate")
+    public ResponseEntity<String> loginInitiate(@RequestBody LoginInitiateDTO request) {
+        twoFactorAuthService.loginInitiate(request);
+        return ResponseEntity.ok("If the credentials are correct, a verification code has been sent.");
+    }
+
+    @PostMapping("/login/complete")
+    public ResponseEntity<String> loginComplete(@RequestBody LoginCompleteDTO request, HttpServletResponse response) {
+        AuthResponseDTO auth = twoFactorAuthService.loginComplete(request);
         addHttpToken(response, auth.getToken());
         return ResponseEntity.ok("OK!");
     }
@@ -64,10 +73,10 @@ public class AuthController {
 
         response.setHeader("Set-Cookie",
                 "authToken=" +
-                        "; Max-Age=0" +       // Cookie expiration time (1 hour)
-                        "; Path=/" +             // Cookie is available throughout the entire domain
-                        "; Secure" +             // Cookie is sent only over HTTPS
-                        "; HttpOnly" +           // Cookie is not accessible via JavaScript
+                        "; Max-Age=0" +
+                        "; Path=/" +
+                        "; Secure" +
+                        "; HttpOnly" +
                         "; SameSite=Strict");
 
         response.setStatus(HttpServletResponse.SC_OK);
@@ -77,10 +86,10 @@ public class AuthController {
     private void addHttpToken(HttpServletResponse response, String token) {
         response.setHeader("Set-Cookie",
                 "authToken=" + token +
-                        "; Max-Age=3600" +       // Cookie expiration time (1 hour)
-                        "; Path=/" +             // Cookie is available throughout the entire domain
-                        "; Secure" +             // Cookie is sent only over HTTPS
-                        "; HttpOnly" +           // Cookie is not accessible via JavaScript
+                        "; Max-Age=3600" +
+                        "; Path=/" +
+                        "; Secure" +
+                        "; HttpOnly" +
                         "; SameSite=Strict");
     }
 }
