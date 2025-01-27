@@ -19,7 +19,7 @@
 
     const randomColor = iconColors[Math.floor(Math.random() * iconColors.length)];
 
-    $: if ($selectedChatId) {
+    $: if (selectedChatId) {
         fetchMessages($selectedChatId);
     }
 
@@ -28,21 +28,38 @@
     }
 
     async function fetchMessages(chatId) {
+        console.log(`Fetching messages for chatId: ${chatId}`);
+
         try {
-            const response = await api.post('api/message/get', {chatId});
+            const response = await api.post('api/message/get', { chatId });
+
+            console.log(`Raw response data for chatId ${chatId}:`, response.data);
+
             const sortedMessages = response.data.messageList.sort((a, b) =>
                 new Date(a.timestamp) - new Date(b.timestamp)
             );
-            messages.update(current => ({
-                ...current,
-                [chatId]: sortedMessages
-            }));
+
+            // Log the sorted messages
+            console.log(`Sorted messages for chatId ${chatId}:`, sortedMessages);
+
+            messages.update(current => {
+                const updatedMessages = {
+                    ...current,
+                    [chatId]: sortedMessages
+                };
+                console.log(`Updated messages state after processing chatId ${chatId}:`, updatedMessages);
+                return updatedMessages;
+            });
         } catch (error) {
-            messages.update(current => ({
-                ...current,
-                [chatId]: []
-            }));
-            console.error('Error fetching messages:', error);
+            console.error(`Error fetching messages for chatId ${chatId}:`, error);
+            messages.update(current => {
+                const updatedMessages = {
+                    ...current,
+                    [chatId]: []
+                };
+                console.log(`Messages state after error for chatId ${chatId}:`, updatedMessages);
+                return updatedMessages;
+            });
         }
     }
 
