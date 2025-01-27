@@ -17,8 +17,10 @@ import io.github.lumijiez.auth.repository.TempUserRepository;
 import io.github.lumijiez.auth.repository.UserRepository;
 import io.github.lumijiez.auth.security.JwtHelper;
 import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -123,7 +125,7 @@ public class TwoFactorAuthService {
     }
 
     public void sendVerificationEmail(String recipientEmail, String verificationCode) throws MessagingException {
-        String subject = "Verify Your Account";
+        String subject = "RAVEN - Verify Your Account";
         String content = "<html>"
                 + "<body style='font-family: Arial, sans-serif; color: #333;'>"
                 + "<h2 style='color: #5c6bc0;'>Account Verification</h2>"
@@ -142,7 +144,7 @@ public class TwoFactorAuthService {
     }
 
     public void sendLoginVerificationEmail(String recipientEmail, String verificationCode) throws MessagingException {
-        String subject = "Login Verification Code";
+        String subject = "RAVEN - Login Verification Code";
         String content = "<html>"
                 + "<body style='font-family: Arial, sans-serif; color: #333;'>"
                 + "<h2 style='color: #ff7043;'>Login Verification</h2>"
@@ -160,12 +162,14 @@ public class TwoFactorAuthService {
         sendEmail(recipientEmail, subject, content);
     }
 
-    private void sendEmail(String to, String subject, String text) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(to);
-        message.setSubject(subject);
-        message.setText(text);
-        mailSender.send(message);
+    private void sendEmail(String recipientEmail, String subject, String content) throws MessagingException {
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
+        helper.setTo(recipientEmail);
+        helper.setSubject(subject);
+        helper.setText(content, true);
+
+        mailSender.send(mimeMessage);
     }
 }
 
