@@ -46,7 +46,7 @@ public class WebSocketSecurityConfig implements WebSocketMessageBrokerConfigurer
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
                 .setAllowedOriginPatterns(
-                        "https://lumijiez.pw",
+                        "https://lumijiez.site",
                         "http://*:[*]",
                         "https://*:[*]",
                         "http://*",

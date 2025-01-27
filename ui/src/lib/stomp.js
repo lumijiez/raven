@@ -4,7 +4,7 @@ import {isConnected, sockJsConnection, stompJsConnection} from "../stores/connec
 import {toast} from "svelte-sonner";
 
 async function connectWebSocket() {
-    const socket = new SockJS('https://lumijiez.pw/ws', null, {
+    const socket = new SockJS('https://lumijiez.site/ws', null, {
         withCredentials: true
     });
 

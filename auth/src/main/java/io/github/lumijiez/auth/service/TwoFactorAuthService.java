@@ -131,11 +131,12 @@ public class TwoFactorAuthService {
                 + "<style>"
                 + "body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7fc; margin: 0; padding: 0; }"
                 + ".email-container { width: 100%; max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; }"
-                + ".email-header { background-color: #5c6bc0; color: white; padding: 20px; text-align: center; }"
-                + ".email-body { padding: 20px; color: #333; line-height: 1.6; }"
-                + ".email-body h2 { color: #5c6bc0; font-size: 24px; margin-bottom: 20px; }"
+                + ".email-header { background: linear-gradient(to right, #3b82f6, #9333ea); color: white; padding: 40px 20px; text-align: center; }"
+                + ".email-header h1 { font-size: 36px; font-weight: bold; letter-spacing: 1px; margin: 0; }"
+                + ".email-body { padding: 30px; color: #333; line-height: 1.6; }"
+                + ".email-body h2 { color: #3b82f6; font-size: 26px; margin-bottom: 20px; }"
                 + ".email-body p { font-size: 16px; margin-bottom: 10px; }"
-                + ".verification-code { background-color: #5c6bc0; color: white; padding: 15px; font-size: 22px; font-weight: bold; text-align: center; margin: 20px 0; border-radius: 8px; }"
+                + ".verification-code { background-color: #3b82f6; color: white; padding: 15px; font-size: 24px; font-weight: bold; text-align: center; margin: 20px 0; border-radius: 8px; }"
                 + ".email-footer { text-align: center; padding: 20px; font-size: 14px; color: #888; border-top: 1px solid #ddd; }"
                 + "</style>"
                 + "</head>"
@@ -150,16 +151,14 @@ public class TwoFactorAuthService {
                 + "<p>We received a request to verify your account. Please use the following verification code to complete the process:</p>"
                 + "<div class='verification-code'>" + verificationCode + "</div>"
                 + "<p>If you did not request this, please ignore this email.</p>"
-                + "<p>Thank you for choosing RAVEN!</p>"
+                + "<p>Thank you for choosing Raven!</p>"
                 + "</div>"
                 + "<div class='email-footer'>"
-                + "<p>Best regards,<br>RAVEN</p>"
+                + "<p>Best regards,<br>Raven</p>"
                 + "</div>"
                 + "</div>"
                 + "</body>"
-                + "</html>"
-                ;
-
+                + "</html>";
 
         sendEmail(recipientEmail, subject, content);
     }
@@ -171,11 +170,12 @@ public class TwoFactorAuthService {
                 + "<style>"
                 + "body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7fc; margin: 0; padding: 0; }"
                 + ".email-container { width: 100%; max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; }"
-                + ".email-header { background-color: #ff7043; color: white; padding: 20px; text-align: center; }"
-                + ".email-body { padding: 20px; color: #333; line-height: 1.6; }"
-                + ".email-body h2 { color: #ff7043; font-size: 24px; margin-bottom: 20px; }"
+                + ".email-header { background: linear-gradient(to right, #3b82f6, #9333ea); color: white; padding: 40px 20px; text-align: center; }"
+                + ".email-header h1 { font-size: 36px; font-weight: bold; letter-spacing: 1px; margin: 0; }"
+                + ".email-body { padding: 30px; color: #333; line-height: 1.6; }"
+                + ".email-body h2 { color: #9333ea; font-size: 26px; margin-bottom: 20px; }"
                 + ".email-body p { font-size: 16px; margin-bottom: 10px; }"
-                + ".verification-code { background-color: #ff7043; color: white; padding: 15px; font-size: 22px; font-weight: bold; text-align: center; margin: 20px 0; border-radius: 8px; }"
+                + ".verification-code { background-color: #9333ea; color: white; padding: 15px; font-size: 24px; font-weight: bold; text-align: center; margin: 20px 0; border-radius: 8px; }"
                 + ".email-footer { text-align: center; padding: 20px; font-size: 14px; color: #888; border-top: 1px solid #ddd; }"
                 + "</style>"
                 + "</head>"
@@ -193,15 +193,15 @@ public class TwoFactorAuthService {
                 + "<p>Thank you for your attention!</p>"
                 + "</div>"
                 + "<div class='email-footer'>"
-                + "<p>Best regards,<br>RAVEN</p>"
+                + "<p>Best regards,<br>Raven</p>"
                 + "</div>"
                 + "</div>"
                 + "</body>"
-                + "</html>"
-                ;
+                + "</html>";
 
         sendEmail(recipientEmail, subject, content);
     }
+
 
     private void sendEmail(String recipientEmail, String subject, String content) throws MessagingException {
         MimeMessage mimeMessage = mailSender.createMimeMessage();

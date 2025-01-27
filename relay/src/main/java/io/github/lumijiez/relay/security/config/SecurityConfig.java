@@ -35,7 +35,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         configuration.setAllowedOriginPatterns(java.util.Arrays.asList(
-                "https://lumijiez.pw",
+                "https://lumijiez.site",
                 "http://*:[*]",
                 "https://*:[*]",
                 "http://*",
