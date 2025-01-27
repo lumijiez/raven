@@ -73,17 +73,19 @@ public class MessageService {
     }
 
     @Transactional
-    public MessageDTO sendMessageTrusty(KafkaMessage message) {
-        if (chatService.lacksAccessToChat(claims.getSub(), request.getChatId())) {
+    public MessageDTO sendMessageTrusty(KafkaMessage kafkaMessage) {
+        UUID sub = kafkaMessage.getSenderId();
+        UUID chatId = kafkaMessage.getChatId();
+        if (chatService.lacksAccessToChat(sub, chatId)) {
             throw new AccessDeniedException("User does not have access to this chat");
         }
 
         Message message = new Message();
         message.setId(UUID.randomUUID());
-        message.setSender(claims.getSub());
+        message.setSender(sub);
         message.setTimestamp(Instant.now());
-        message.setChatId(request.getChatId());
-        message.setContent(request.getContent());
+        message.setChatId(chatId);
+        message.setContent(kafkaMessage.getContent());
 
         return MessageDTO.from(messageRepository.save(message));
     }

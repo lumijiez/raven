@@ -11,7 +11,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class KafkaMessageResponse {
-    UUID senderId;
+    UUID id;
+    UUID sender;
     UUID chatId;
     LocalDateTime timestamp;
     String content;

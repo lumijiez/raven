@@ -2,16 +2,26 @@
     import { chatList, selectedChatId, messages } from "../../stores/chats.js";
     import ChatListEntry from "./ChatListEntry.svelte";
     import ChatMessages from "./ChatMessages.svelte";
-    import { onMount } from "svelte";
-    import api from "$lib/axios.js";
     import UserBar from "./UserBar.svelte";
     import { Search } from 'lucide-svelte';
     import { Input } from "$lib/shad/ui/input/index.js";
     import ConnectionStatus from "./ConnectionStatus.svelte";
     import {get} from "svelte/store";
     import {stompJsConnection} from "../../stores/connection.js";
-    import {addMessage} from "../../stores/chats.js";
     import {toast} from "svelte-sonner";
+
+    function addMessage(chatId, message) {
+        console.log("CURRENT", $messages);
+        messages.update(current => {
+            const chatMessages = current[chatId] || [];
+
+            return {
+                ...current,
+                [chatId]: [...chatMessages, message],
+            };
+        });
+        console.log("UPDATED", $messages);
+    }
 
     let searchQuery = '';
 
@@ -34,7 +44,7 @@
                     console.log('Parsed Data:', data);
                     console.log('Topic:', `/topic/chats/${chatId}`);
                     console.groupEnd();
-                    addMessage(chatId, message);
+                    addMessage(chatId, message.body);
 
                 } catch (error) {
                     toast('Message Processing Error', {

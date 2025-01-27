@@ -39,7 +39,6 @@
                 new Date(a.timestamp) - new Date(b.timestamp)
             );
 
-            // Log the sorted messages
             console.log(`Sorted messages for chatId ${chatId}:`, sortedMessages);
 
             messages.update(current => {
@@ -76,7 +75,7 @@
             chatId: $selectedChatId,
             content: newMessage
         }));
-        newMessage.value = '';
+        newMessage = '';
     }
 
     function getChatName() {
