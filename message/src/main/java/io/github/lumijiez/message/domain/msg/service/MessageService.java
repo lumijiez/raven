@@ -9,6 +9,7 @@ import io.github.lumijiez.message.domain.msg.dto.response.MessageDTO;
 import io.github.lumijiez.message.domain.msg.dto.response.MessageQueryResponseDTO;
 import io.github.lumijiez.message.domain.msg.entity.Message;
 import io.github.lumijiez.message.domain.msg.repository.MessageRepository;
+import io.github.lumijiez.model.kafka.KafkaMessage;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -57,6 +58,22 @@ public class MessageService {
 
     @Transactional
     public MessageDTO sendMessage(JwtClaims claims, MessageSendRequestDTO request) {
+        if (chatService.lacksAccessToChat(claims.getSub(), request.getChatId())) {
+            throw new AccessDeniedException("User does not have access to this chat");
+        }
+
+        Message message = new Message();
+        message.setId(UUID.randomUUID());
+        message.setSender(claims.getSub());
+        message.setTimestamp(Instant.now());
+        message.setChatId(request.getChatId());
+        message.setContent(request.getContent());
+
+        return MessageDTO.from(messageRepository.save(message));
+    }
+
+    @Transactional
+    public MessageDTO sendMessageTrusty(KafkaMessage message) {
         if (chatService.lacksAccessToChat(claims.getSub(), request.getChatId())) {
             throw new AccessDeniedException("User does not have access to this chat");
         }

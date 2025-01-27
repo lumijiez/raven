@@ -20,7 +20,7 @@ public class KafkaConsumer {
     @KafkaListener(topics = "chat.requests", groupId = "chat-consumers")
     public void listenRequests(KafkaMessage kafkaMessage) {
         System.out.println("Received request: " + kafkaMessage);
-
+        messageService.sendMessageTrusty(kafkaMessage);
         producer.sendToClient(new KafkaMessageResponse(kafkaMessage.getSenderId(), kafkaMessage.getChatId(), kafkaMessage.getTimestamp(), kafkaMessage.getContent()));
     }
 }
