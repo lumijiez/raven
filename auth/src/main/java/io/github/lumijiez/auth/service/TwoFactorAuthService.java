@@ -160,6 +160,7 @@ public class TwoFactorAuthService {
                 + "</html>"
                 ;
 
+
         sendEmail(recipientEmail, subject, content);
     }
 
