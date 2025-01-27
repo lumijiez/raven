@@ -36,6 +36,7 @@
 <div class="h-screen w-screen flex justify-center items-center">
     <div class="ml-2 mr-2 bg-white w-full max-w-md h-fit shadow-2xl rounded-2xl overflow-hidden relative">
         <div class="icon flex justify-center align-middle pt-6">
+            <img src="./icon.png" alt="Raven Icon" />
             <h1 class="text-6xl">RAVEN</h1>
         </div>
         <div class={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${modes[$authMode].bgGradient}`}></div>

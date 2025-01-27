@@ -62,23 +62,25 @@ public class AuthController {
     public void logout(HttpServletRequest request, HttpServletResponse response) {
         SecurityContextHolder.clearContext();
 
-        Cookie cookie = new Cookie("authToken", "");
-        cookie.setMaxAge(0);
-        cookie.setPath("/");
-        cookie.setSecure(true);
-        cookie.setHttpOnly(true);
-        response.addCookie(cookie);
+        response.setHeader("Set-Cookie",
+                "authToken=" +
+                        "; Max-Age=0" +       // Cookie expiration time (1 hour)
+                        "; Path=/" +             // Cookie is available throughout the entire domain
+                        "; Secure" +             // Cookie is sent only over HTTPS
+                        "; HttpOnly" +           // Cookie is not accessible via JavaScript
+                        "; SameSite=Strict");
 
         response.setStatus(HttpServletResponse.SC_OK);
     }
 
 
     private void addHttpToken(HttpServletResponse response, String token) {
-        Cookie cookie = new Cookie("authToken", token);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true);
-        cookie.setPath("/");
-        cookie.setMaxAge(3600);
-        response.addCookie(cookie);
+        response.setHeader("Set-Cookie",
+                "authToken=" + token +
+                        "; Max-Age=3600" +       // Cookie expiration time (1 hour)
+                        "; Path=/" +             // Cookie is available throughout the entire domain
+                        "; Secure" +             // Cookie is sent only over HTTPS
+                        "; HttpOnly" +           // Cookie is not accessible via JavaScript
+                        "; SameSite=Strict");
     }
 }
