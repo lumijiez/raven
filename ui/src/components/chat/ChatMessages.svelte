@@ -7,6 +7,7 @@
     import { messages, selectedChatId } from "../../stores/chats.js";
     import {stompJsConnection} from "../../stores/connection.js";
     import {toast} from "svelte-sonner";
+    import {chatList} from "../../stores/chats.js";
 
     const iconColors = [
         'from-blue-500 to-purple-600',
@@ -65,7 +66,7 @@
                 <MessageCircle class="text-white" size={20}/>
             </div>
             <div class="flex-grow">
-                <p class="text-gray-800 font-semibold">{$selectedChatId}</p>
+                <p class="text-gray-800 font-semibold">{$chatList.get($selectedChatId).id}</p>
             </div>
             <Button variant="ghost" size="icon" class="text-gray-500">
                 <MoreVertical size={20}/>
