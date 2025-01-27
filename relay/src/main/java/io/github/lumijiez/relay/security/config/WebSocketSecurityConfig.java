@@ -82,7 +82,7 @@ public class WebSocketSecurityConfig implements WebSocketMessageBrokerConfigurer
                                 accessor.setUser(claims);
                                 log.info("WebSocket authentication successful");
                             } else {
-                                log.error("Invalid JWT token: {}", claims.getError());
+                                log.error("Invalid JWT token: {} : {}", claims.getError(), claims);
                                 throw new SecurityException("Invalid JWT token");
                             }
                         } catch (Exception e) {
@@ -102,6 +102,7 @@ public class WebSocketSecurityConfig implements WebSocketMessageBrokerConfigurer
                 Map<String, Object> sessionAttributes = accessor.getSessionAttributes();
 
                 if (sessionAttributes != null) {
+                    log.error(sessionAttributes.toString());
                     return ((String) sessionAttributes.get("cookie")).split("=")[1];
                 }
 

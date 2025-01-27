@@ -8,6 +8,18 @@
     import {stompJsConnection} from "../../stores/connection.js";
     import {toast} from "svelte-sonner";
     import {chatList} from "../../stores/chats.js";
+    import { tick } from "svelte";
+
+    let messageListContainer;
+    function scrollToBottom() {
+        tick().then(() => {
+            setTimeout(() => {
+                if (messageListContainer) {
+                    messageListContainer.scrollTop = messageListContainer.scrollHeight;
+                }
+            }, 10);
+        });
+    }
 
     const iconColors = [
         'from-blue-500 to-purple-600',
@@ -75,6 +87,7 @@
             chatId: $selectedChatId,
             content: newMessage
         }));
+        scrollToBottom();
         newMessage = '';
     }
 
@@ -104,7 +117,7 @@
             </Button>
         </div>
 
-        <div class="flex-grow overflow-y-auto p-4 space-y-3">
+        <div class="flex-grow overflow-y-auto p-4 space-y-3" bind:this={messageListContainer}>
             {#each $messages[$selectedChatId] || [] as message}
                 <div class={`flex ${message.sender === $id ? 'justify-end' : 'justify-start'}`}>
                     <div class={`max-w-[70%] p-3 rounded-2xl

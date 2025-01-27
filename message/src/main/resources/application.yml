@@ -19,8 +19,8 @@ spring:
 
 logging:
     level:
-        root: debug
-        org.apache.kafka: debug
+        root: warn
+        org.apache.kafka: warn
         org.springframework.kafka: warn
-        org.springframework.web: debug
-        org.springframework.boot: debug
+        org.springframework.web: warn
+        org.springframework.boot: warn

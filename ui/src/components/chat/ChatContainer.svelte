@@ -39,14 +39,19 @@
             get(stompJsConnection).subscribe(`/topic/chats/${chatId}`, message => {
                 try {
                     const data = JSON.parse(message.body);
-                    console.group(`%cMessage Received - Chat ${chatId}`, 'color: blue; font-weight: bold');
-                    console.log('Raw Message:', message);
+
+                    if (typeof data.timestamp === "string" && data.timestamp.includes(".")) {
+                        data.timestamp = data.timestamp.replace(/(\.\d{3})\d+/, "$1");
+                    }
+
+                    console.group(`%cMessage Received - Chat ${chatId}`, 'color: lightblue; font-weight: bold');
                     console.log('Parsed Data:', data);
-                    console.log('Topic:', `/topic/chats/${chatId}`);
                     console.groupEnd();
-                    addMessage(chatId, message.body);
+
+                    addMessage(chatId, data);
 
                 } catch (error) {
+                    console.error("Message Processing Error:", error);
                     toast('Message Processing Error', {
                         message: error.message,
                         chatId: chatId,
@@ -56,6 +61,7 @@
                 }
             });
         } catch (error) {
+            console.error("Chat Subscription Error:", error);
             toast('Chat Subscription Error', {
                 message: error.message,
                 chatId: chatId,
