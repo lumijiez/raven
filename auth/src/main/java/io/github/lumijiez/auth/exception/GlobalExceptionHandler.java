@@ -48,4 +48,11 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.UNAUTHORIZED)
                 .body(ApiResponseDTO.error(ex.getMessage()));
     }
+
+    @ExceptionHandler(AuthException.class)
+    public ResponseEntity<ApiResponseDTO<Void>> handleIncorrectCredentialsException(AuthException ex) {
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(ApiResponseDTO.error(ex.getMessage()));
+    }
 }

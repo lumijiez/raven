@@ -11,6 +11,7 @@ import io.github.lumijiez.auth.dto.request.LoginRequestDTO;
 import io.github.lumijiez.auth.dto.request.RegisterRequestDTO;
 import io.github.lumijiez.auth.dto.response.AuthResponseDTO;
 import io.github.lumijiez.auth.security.JwtHelper;
+import jakarta.security.auth.message.AuthException;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -29,11 +30,13 @@ public class UserService {
     public UserService(UserRepository userRepository,
                        BCryptPasswordEncoder passwordEncoder,
                        JwtHelper jwtHelper,
-                       ModelMapper modelMapper) {
+                       ModelMapper modelMapper,
+                       TwoFactorAuthService twoFactorService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtHelper = jwtHelper;
         this.modelMapper = modelMapper;
+        this.twoFactorService = twoFactorService;
     }
 
     @Transactional
@@ -63,9 +66,26 @@ public class UserService {
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword()))
             throw new IncorrectCredentialsException();
 
-        return AuthResponseDTO.from(jwtHelper.generateTokenForUser(user));
+        twoFactorService.generateAndSendCode(user);
+
+        return AuthResponseDTO.builder()
+                .token(null)
+                .requiresTwoFactor(true)
+                .build();
     }
 
+    @Transactional
+    public AuthResponseDTO verifyTwoFactorCode(String usernameOrEmail, String code) throws AuthException {
+        User user = userRepository
+                .findByUsernameOrEmail(usernameOrEmail, usernameOrEmail)
+                .orElseThrow(() -> new UserNotFoundException(usernameOrEmail));
+
+        if (!twoFactorService.validateCode(user, code)) {
+            throw new AuthException("2FA Code Incorrect");
+        }
+
+        return AuthResponseDTO.from(jwtHelper.generateTokenForUser(user));
+    }
 
     @Transactional(readOnly = true)
     public UserDetailsDTO findUser(FindUserRequestDTO request) {
