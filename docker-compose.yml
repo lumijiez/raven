@@ -92,4 +92,4 @@ services:
       CLUSTER_ID: "b2b8f8a2-4ed6-4b8f-88a2-92bb957a5e43"
       KAFKA_LOG4J_LOGGERS: "kafka=WARN,kafka.controller=WARN,kafka.log.LogCleaner=WARN,state.change.logger=WARN,kafka.producer.async.DefaultEventHandler=WARN"
       KAFKA_LOG4J_ROOT_LOGLEVEL: WARN
-      KAFKA_LOG4J_TOOLS_LOGLEVEL: ERROR
+      KAFKA_LOG4J_TOOLS_LOGLEVEL: WARN
