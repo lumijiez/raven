@@ -12,7 +12,6 @@ import java.util.Base64;
 @RequestMapping("/api/crypto")
 public class CryptoController {
     private final ECCryptographyService cryptographyService;
-
     public CryptoController(ECCryptographyService cryptographyService) {
         this.cryptographyService = cryptographyService;
     }

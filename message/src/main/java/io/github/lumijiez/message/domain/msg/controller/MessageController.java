@@ -38,10 +38,4 @@ public class MessageController {
         MessageDTO response = messageService.sendMessage((JwtClaims) auth.getDetails(), request);
         return ResponseEntity.ok(response);
     }
-
-    @PostMapping("/test-kafka/{chatId}")
-    public ResponseEntity<String> testKafka(@PathVariable String chatId, @RequestParam KafkaMessageResponse message) {
-        kafkaProducer.sendToClient(message);
-        return ResponseEntity.ok("Sent to Kafka successfully");
-    }
 }
