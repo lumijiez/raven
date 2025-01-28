@@ -18,12 +18,11 @@ public class RelayService {
         this.simpMessagingTemplate = simpMessagingTemplate;
     }
 
-    public KafkaMessage processMessage(KafkaMessage kafkaMessage) {
+    public void processMessage(KafkaMessage kafkaMessage) {
         producer.sendToServer(kafkaMessage);
         log.info("Processing kafkaMessage: senderId={}, chatId='{}', content={}",
                 kafkaMessage.getSenderId(),
                 kafkaMessage.getChatId(),
                 kafkaMessage.getContent());
-        return kafkaMessage;
     }
 }
