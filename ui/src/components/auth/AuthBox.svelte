@@ -48,6 +48,7 @@
                     <h2 class="text-3xl font-bold text-gray-800">
                         {modes[$authMode].title}
                     </h2>
+
                     <p class="text-gray-500">
                         {modes[$authMode].subtitle}
                     </p>
