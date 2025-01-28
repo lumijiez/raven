@@ -5,17 +5,17 @@
 
     const authMode = writable('login');
     const modes = {
-        login: {
-            title: 'Welcome Back',
-            subtitle: 'Sign in to continue',
-            bgGradient: 'from-blue-500 to-purple-600',
-            icon: 'login'
-        },
         register: {
             title: 'Get Started',
             subtitle: 'Create your account',
             bgGradient: 'from-green-400 to-teal-500',
             icon: 'user-plus'
+        },
+        login: {
+            title: 'Welcome Back',
+            subtitle: 'Sign in to continue',
+            bgGradient: 'from-blue-500 to-purple-600',
+            icon: 'login'
         }
     };
 </script>
