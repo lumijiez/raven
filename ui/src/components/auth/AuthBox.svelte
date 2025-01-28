@@ -31,6 +31,7 @@
     .icon {
         font-family: 'GilroyBoldItalic', sans-serif;
     }
+
 </style>
 
 <div class="h-screen w-screen flex justify-center items-center">
