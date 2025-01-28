@@ -9,5 +9,6 @@ import java.util.UUID;
 
 public interface MessageRepository extends MongoRepository<Message, String> {
     List<Message> findTop100ByChatIdOrderByTimestampDesc(UUID chatId);
+
     List<Message> findTop100ByChatIdAndTimestampAfterOrderByTimestampDesc(UUID chatId, Instant lastMessageTimestamp);
 }
