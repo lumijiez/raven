@@ -11,11 +11,9 @@ import org.springframework.stereotype.Service;
 public class RelayService {
 
     private final KafkaProducer producer;
-    private final SimpMessagingTemplate simpMessagingTemplate;
 
-    public RelayService(KafkaProducer producer, SimpMessagingTemplate simpMessagingTemplate) {
+    public RelayService(KafkaProducer producer) {
         this.producer = producer;
-        this.simpMessagingTemplate = simpMessagingTemplate;
     }
 
     public void processMessage(KafkaMessage kafkaMessage) {
