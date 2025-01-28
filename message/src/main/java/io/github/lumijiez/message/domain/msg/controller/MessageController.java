@@ -17,11 +17,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/message")
 public class MessageController {
     private final MessageService messageService;
-    private final KafkaProducer kafkaProducer;
 
-    public MessageController(MessageService messageService, KafkaProducer kafkaProducer) {
+    public MessageController(MessageService messageService) {
         this.messageService = messageService;
-        this.kafkaProducer = kafkaProducer;
     }
 
     @PostMapping("/get")
