@@ -2,7 +2,9 @@
     export let chatId;
     export let chatName;
     export let onSelect;
+
     import { MessageCircle } from 'lucide-svelte';
+    import {messages} from "../../stores/chats.js";
 
     const iconColors = [
         'from-blue-500 to-purple-600',
@@ -13,6 +15,17 @@
     ];
 
     const randomColor = iconColors[Math.floor(Math.random() * iconColors.length)];
+
+    let lastMessage = '';
+
+    $: {
+        const chatMessages = $messages[chatId];
+        if (chatMessages && chatMessages.length > 0) {
+            lastMessage = chatMessages[chatMessages.length - 1].content;
+        } else {
+            lastMessage = '';
+        }
+    }
 </script>
 
 <div
@@ -27,10 +40,10 @@
     </div>
     <div class="flex-grow">
         <p class="text-gray-800 font-semibold">{chatName}</p>
-        <p class="text-gray-500 text-sm truncate">Hey, how are you doing today?</p>
+        <p class="text-gray-500 text-sm truncate">{lastMessage || 'No messages yet'}</p>
     </div>
-    <div class="flex flex-col items-end">
-        <span class="text-xs text-gray-400 mb-1">2m</span>
-        <div class="bg-blue-500 text-white text-xs rounded-full px-2 py-0.5">1</div>
-    </div>
+<!--    <div class="flex flex-col items-end">-->
+<!--        <span class="text-xs text-gray-400 mb-1">2m</span>-->
+<!--        <div class="bg-blue-500 text-white text-xs rounded-full px-2 py-0.5">1</div>-->
+<!--    </div>-->
 </div>
