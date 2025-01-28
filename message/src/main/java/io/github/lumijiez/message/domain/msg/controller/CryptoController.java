@@ -16,15 +16,15 @@ public class CryptoController {
         this.cryptographyService = cryptographyService;
     }
 
-    @PostMapping("/encrypt")
-    public String encrypt(@RequestBody String message) throws Exception {
-        byte[] encrypted = cryptographyService.encrypt(message);
-        return Base64.getEncoder().encodeToString(encrypted);
-    }
-
     @PostMapping("/decrypt")
     public String decrypt(@RequestBody String encryptedBase64) throws Exception {
         byte[] encrypted = Base64.getDecoder().decode(encryptedBase64);
         return cryptographyService.decrypt(encrypted);
+    }
+
+    @PostMapping("/encrypt")
+    public String encrypt(@RequestBody String message) throws Exception {
+        byte[] encrypted = cryptographyService.encrypt(message);
+        return Base64.getEncoder().encodeToString(encrypted);
     }
 }
