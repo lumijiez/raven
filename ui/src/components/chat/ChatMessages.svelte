@@ -9,6 +9,7 @@
     import {toast} from "svelte-sonner";
     import {chatList} from "../../stores/chats.js";
     import { tick } from "svelte";
+    import {fade} from "svelte/transition";
 
     let messageListContainer;
     function scrollToBottom() {
@@ -17,7 +18,7 @@
                 if (messageListContainer) {
                     messageListContainer.scrollTop = messageListContainer.scrollHeight;
                 }
-            }, 10);
+            }, 50);
         });
     }
 
@@ -33,10 +34,6 @@
 
     $: if (selectedChatId) {
         fetchMessages($selectedChatId);
-    }
-
-    async function getUserName(userId) {
-
     }
 
     async function fetchMessages(chatId) {
@@ -100,6 +97,10 @@
         const chat = $chatList.find(c => c.id === $selectedChatId);
         return chat ? chat.members.length : 0;
     }
+
+    $: if (messages) {
+        scrollToBottom();
+    }
 </script>
 
 <div class="flex flex-col flex-1 h-screen bg-gray-50">
@@ -119,7 +120,7 @@
 
         <div class="flex-grow overflow-y-auto p-4 space-y-3" bind:this={messageListContainer}>
             {#each $messages[$selectedChatId] || [] as message}
-                <div class={`flex ${message.sender === $id ? 'justify-end' : 'justify-start'}`}>
+                <div in:fade class={`flex ${message.sender === $id ? 'justify-end' : 'justify-start'}`}>
                     <div class={`max-w-[70%] p-3 rounded-2xl
                         ${message.sender === $id
                             ? 'bg-blue-500 text-white'
@@ -161,8 +162,15 @@
             </div>
         </div>
     {:else}
-        <div class="flex items-center justify-center h-full text-gray-500">
+        <div class="gilroy flex items-center justify-center h-full text-gray-500">
             Select a chat to start messaging
         </div>
     {/if}
 </div>
+
+<style>
+    .gilroy {
+        font-family: 'GilroyBoldItalic', sans-serif;
+    }
+</style>
+

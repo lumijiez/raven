@@ -9,6 +9,8 @@
     import {get} from "svelte/store";
     import {stompJsConnection} from "../../stores/connection.js";
     import {toast} from "svelte-sonner";
+    import api from "$lib/axios.js";
+    import {slide} from "svelte/transition";
 
     function addMessage(chatId, message) {
         console.log("CURRENT", $messages);
@@ -32,6 +34,16 @@
     async function selectChat(chatId) {
         console.log(chatId);
         selectedChatId.set(chatId);
+    }
+
+    async function createChat() {
+        if (name && chatPartner) {
+            try {
+                const response = await api.post('api/chat/create-direct', {name, chatPartner});
+            } catch {
+                toast("Error creating chat!");
+            }
+        }
     }
 
     async function subscribeChat(chatId) {
@@ -75,6 +87,10 @@
             subscribeChat(chat.id);
         })
     }
+
+    let isDropdownOpen = false;
+    let chatPartner = '';
+    let name = '';
 </script>
 
 <div class="flex h-screen w-screen">
@@ -96,6 +112,50 @@
             </div>
         </div>
 
+        <div class="p-3">
+            <button
+                    class="gilroy w-full py-2 bg-black text-white rounded-lg bg-gradient-to-l from-blue-500 to-purple-600"
+                    on:click={() => isDropdownOpen = !isDropdownOpen}
+            >
+                ADD
+            </button>
+        </div>
+
+        {#if isDropdownOpen}
+            <div transition:slide class="relative p-3 bg-white border rounded-lg shadow-lg w-full">
+                <div class="mb-4">
+                    <label for="chat-name" class="block text-sm font-medium text-gray-700">Chat Name</label>
+                    <Input
+                            id="chat-name"
+                            type="text"
+                            bind:value={name}
+                            placeholder="Enter chat name"
+                            class="mt-1 block w-full border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200"
+                    />
+                </div>
+
+                <div class="mb-4">
+                    <label for="chat-partner" class="block text-sm font-medium text-gray-700">Partner Username</label>
+                    <Input
+                            id="chat-partner"
+                            type="text"
+                            bind:value={chatPartner}
+                            placeholder="Enter partner username"
+                            class="mt-1 block w-full border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200"
+                    />
+                </div>
+
+                <div class="mt-4">
+                    <button
+                            class="w-full py-2 bg-black text-white rounded-lg"
+                            on:click={createChat}
+                    >
+                        Create
+                    </button>
+                </div>
+            </div>
+        {/if}
+
         <div class="flex flex-1 flex-col">
             <div class="overflow-y-auto flex-1">
                 {#each filteredChats as chat}
@@ -113,3 +173,9 @@
 
     <ChatMessages />
 </div>
+
+<style>
+    .gilroy {
+        font-family: 'GilroyBoldItalic', sans-serif;
+    }
+</style>
