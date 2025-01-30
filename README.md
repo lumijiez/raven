@@ -2,6 +2,12 @@
 
 Raven is a secure chat application designed as a university project. It follows a microservices architecture to ensure modularity and security. The platform provides authentication, message handling, and real-time message relay services with a strong focus on end-to-end encryption (E2EE) and best security practices.
 
+![image](https://github.com/user-attachments/assets/c8745b9b-bc1e-4740-87b3-24d4f4de072e)
+![image](https://github.com/user-attachments/assets/72dd5926-a2f0-4551-a65f-8859b88784e6)
+![image](https://github.com/user-attachments/assets/bf934fc5-fbea-411c-87bb-e9f4f0ba9d55)
+
+
+
 ## Architecture Overview
 
 Raven consists of three main microservices:
